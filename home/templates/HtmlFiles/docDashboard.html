@@ -54,12 +54,18 @@
 <div id="main">
 	
 
+ 
 	
 	
 	<div class="clearfix"></div>
 </div> 
 
-
+<form action="" method="post">
+    {% csrf_token %}
+    {{forms}}
+    
+    <input type="submit" value="Confirm">
+</form>
 
 
         

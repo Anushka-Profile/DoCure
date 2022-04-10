@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User,Cbc,ConfirmDoctor
+from .models import User,Cbc,ConfirmDoctor,Comments
 from django.contrib.auth.hashers import make_password
+
+from home import models
 
 # you have to pass string as parameter
 password = "123"
@@ -41,7 +43,7 @@ class NewUserForm(UserCreationForm):
 class ConfirmDoctor(forms.ModelForm):
     class Meta:
         model = ConfirmDoctor
-        fields = ('username','password','gender','Specialization','email')
+        fields = ('username','password')
     
 
 from .models import Doctor
@@ -70,10 +72,20 @@ class DoctorForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comments
+        fields = ("field_name",)
 class ConfirmForm(forms.ModelForm):
     class Meta:
         model = Cbc
         fields = ("rbc","wbc","pc","hgb","rcd","mchc","mpv","pcv","mcv")
+class EditProfileDoctor(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = ('username','Surname', 'email','gender','phone_number','Specialization')
 class EditProfile(forms.ModelForm):
     class Meta:
         model = User

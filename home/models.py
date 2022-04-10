@@ -39,9 +39,6 @@ class Doctor(models.Model):
 class ConfirmDoctor(models.Model):
     username=models.CharField(max_length=100)
     password = models.CharField(max_length=50)
-    email=models.CharField(max_length=250,unique=True)
-    Specialization=models.CharField(choices=[('Orthopedics','Orthopedics'),(' Internal Medicine',' Internal Medicine'),('Obstetrics and Gynecology','Obstetrics and Gynecology'),('Dermatology','Dermatology'),('Pediatrics','Pediatrics'),('General Surgery','General Surgery')],max_length=50)
-    gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     doctor=models.ForeignKey(Doctor, on_delete=models.CASCADE)
     USERNAME_FIELD = 'username'
     def __str__(self):
@@ -53,6 +50,10 @@ class ViewDoctor(models.Model):
      doctor=models.ForeignKey(ConfirmDoctor, on_delete=models.CASCADE)
      status = models.IntegerField(null=False, default=0)
 
+class  Comments(models.Model):
+     user=models.ForeignKey(User, on_delete=models.CASCADE)
+     doctor=models.ForeignKey(ConfirmDoctor, on_delete=models.CASCADE)
+     field_name = models.TextField(max_length=500)
 class Cbc(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rbc = models.FloatField(null=True,blank=True,default=NULL)

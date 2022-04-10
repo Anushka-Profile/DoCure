@@ -107,7 +107,7 @@ div.scroll {
     overflow-x: hidden;
     overflow-y: auto;
     text-align:justify;
-  }}
+  }
   
 @media only all and (max-width: 520px) {
   .btn-sm.btn-light

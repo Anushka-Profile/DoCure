@@ -23,7 +23,7 @@ from DoCure.settings import EMAIL_HOST_USER
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 
-from .forms  import NewUserForm,DoctorForm,ConfirmForm,EditProfile
+from .forms  import NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
@@ -46,7 +46,6 @@ from django.contrib.auth.hashers import make_password
 # Create your views here.
 from .models import *
 
-
 def home(request):
 	name=request.user.username or None
 	return render(request,'HtmlFiles/home.html',{'name':name})
@@ -57,14 +56,21 @@ def homebefore(request):
 def Doctorhome(request):
             name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
             return render(request,'HtmlFiles/Doctorhome.html',{'name':name})
-
+def Comment(request):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+                form.save()
+    form = CommentForm()
+    return render(request,context={'forms':form} ,template_name='HtmlFiles/docDashboard.html')
+    
+        
 def viewDoctor(request):
     context={}
     
     name=request.user.username or None
     user=request.user
     d1 = ConfirmDoctor.objects.exclude(viewdoctor__user = user)
-    print(d1)
 
     
     return render(request,'HtmlFiles/viewDoctor.html',context={'name':name,'d1':d1})
@@ -274,12 +280,10 @@ def docDashboard(request, rid):
 def ViewPatients(request):
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
-    print(doc)
+    
 
     current_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=1)
     pending_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=0)
-    print(current_patients)
-    print(pending_patients)
 
     return render(request,'HtmlFiles/viewPatients.html',context={'curr':current_patients,'name':name,'pend':pending_patients})
 
@@ -419,9 +423,34 @@ def docViewReports(request, user_id):
 
 def reports(request):
     user=request.user or None
+    name=request.user.username or None
     print(user)
     all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
-    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports})
+    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name})
+
+def doctorProfile(request):
+    context={}
+    print(request.session['ConfirmDoctor_id'])
+    confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    all_docs= Doctor.objects.get(confirmdoctor = confirm_doc)  
+    return render(request,'HtmlFiles/doctorProfile.html',context={'all_docs':all_docs})
+
+def dgetEditProfile(request):
+    confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    instance = Doctor.objects.get(confirmdoctor = confirm_doc)
+    form = EditProfileDoctor(instance=instance)
+
+    return render(request,'HtmlFiles/dEditProfile.html',context={'form':form})
+
+def dEditProfile(request):   
+    if request.method == "POST":
+        doc_id=request.session['ConfirmDoctor_id']
+        confirm_doc = ConfirmDoctor.objects.get(id=doc_id)
+        instance = Doctor.objects.get(confirmdoctor = confirm_doc)
+        editform = EditProfileDoctor(request.POST, instance = instance)
+        if editform.is_valid():
+            editform.save()
+            return redirect('doctorProfile')		
 
 def loginPage(request):
 		if request.method == 'POST':

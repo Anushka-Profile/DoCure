@@ -18,11 +18,10 @@
 			{% csrf_token %}
 			<nav>
 				<ul>
-					<li><a href="/Doctorhome/">HOME</a></li>
-					{% comment %} <li><a href="/dashboard/">DASHBOARD</a></li>
-					<li><a  href="/FILE/">Upload</a></li> {% endcomment %}
+					<li><a href="/viewPatients/">HOME</a></li>
+
 					
-					<li style="color:white">{{name.username}}</li>
+					<li style="color:white"><a href="/dEditProfile/">{{name.username}}</li></a>
 					<li><a  href="/logout/">Logout</a></li>
 					{% endif %}
 		
@@ -83,6 +82,12 @@
           </tr>
           {% endfor %}
         </table>
+    </div>
+</DIV>
+    <BR>
+    
+        
+                
     </div>
 </body>
 </html>

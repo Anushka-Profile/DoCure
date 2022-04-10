@@ -118,15 +118,14 @@ div.scroll {
 }
 </style> 
 <body>
-    <h1 style="text-align:center;">Please confirm if these values are correct.</h1> 
 
-    <form action="/editProfile/" method="post">
+    <form action="/dEditProfile/" method="post">
   <div class="scroll">
         {% csrf_token %}
         {{form|crispy}}
         
         <input type="submit" value="Confirm">
     </form>
-  </div>
+</div>
 </body>
 </html>
