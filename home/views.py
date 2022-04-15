@@ -1,5 +1,6 @@
 from multiprocessing import context
 from site import USER_BASE
+from tkinter.font import names
 from tkinter.tix import Form
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -16,14 +17,15 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
 from django.contrib.auth import authenticate, login, logout
-from matplotlib.pyplot import rcdefaults
+from matplotlib.pyplot import rcdefaults, text
 from numpy import delete
+from platformdirs import Path
 from DoCure.settings import EMAIL_HOST_USER
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 
-from .forms  import NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor
+from .forms  import  NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
@@ -65,16 +67,27 @@ def Comment(request):
     return render(request,context={'forms':form} ,template_name='HtmlFiles/docDashboard.html')
     
         
+from django.db.models import CharField, Value
+
 def viewDoctor(request):
     context={}
     
     name=request.user.username or None
     user=request.user
-    d1 = ConfirmDoctor.objects.exclude(viewdoctor__user = user)
+    d1 = ConfirmDoctor.objects.all()
 
+    for doc in d1:
+        if(ViewDoctor.objects.filter(user=user, doctor=doc).exists()):
+            d=ViewDoctor.objects.get(user=user, doctor=doc)
+            doc.status = d.status
+        else:
+            doc.status = 0
+    
+   
+    # for d in d1:
+    #     print(d.status)
     
     return render(request,'HtmlFiles/viewDoctor.html',context={'name':name,'d1':d1})
-
 def Doctorregister(request):
         if request.method == "POST":
             form = DoctorForm(request.POST)
@@ -104,7 +117,6 @@ def confirmForm(request):
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
-            print('e')
     return redirect('viewmyreports')
 
 
@@ -155,8 +167,10 @@ def extract(text):
     if(wbc != None):
         wbc = wbc_re.search(text).group(2)
         wbc = float(wbc.replace(',',''))
-        if(wbc>1000 and wbc<100000):
-            wbc /= 1000
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
     elif(wbc==None):
             wbc = 0.0000000000000
             flag += 1
@@ -165,6 +179,10 @@ def extract(text):
     if(rbc != None):
         rbc = rbc_re.search(text).group(2)
         rbc = float(rbc.replace(',',''))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            rbc /= 1000
     elif(rbc==None):
             rbc = 0.0000000000000
             flag += 1
@@ -173,6 +191,10 @@ def extract(text):
     if(hgb != None):
         hgb = hgb_re.search(text).group(2)
         hgb = float(hgb.replace(',',''))
+        if(hgb>=100 and hgb<1000):
+            hgb /= 10
+        elif(hgb>=1000 and hgb<10000):
+            hgb /= 100
     elif(hgb==None):
             hgb = 0.0000000000000
             flag += 1
@@ -223,6 +245,18 @@ def extract(text):
     if(pc != None):
         pc = pc_re.search(text).group(2)
         pc = float(pc.replace(',',''))
+        if(pc>=1 and pc<10):
+            pc *= 1000000
+        elif(pc>=10 and pc<100):
+            pc *= 100000
+        elif(pc>=100 and pc<1000):
+            pc *= 10000
+        elif(pc>=1000 and pc<10000):
+            pc *= 1000
+        elif(pc>=10000 and pc<100000):
+            pc *= 100
+        elif(pc>=100000 and pc<1000000):
+            pc *= 10
     elif(pc==None):
             pc = 0.0000000000000
             flag += 1
@@ -254,50 +288,105 @@ def extract(text):
 
     	
 
-def GetInfo(path):
+def GetInfo(path,filepassword):
     cbc = path
-    with pdfplumber.open(cbc, password='9821714272') as pdf:
+    
+  
+    with pdfplumber.open(cbc, password=filepassword) as pdf:
         page = pdf.pages[0]
         text = page.extract_text()
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
+   
+
 
 def dashboard(request,rid):
     context={}
     name=request.user.username or None
   
     all_reports= Cbc.objects.get(user=request.user, id=rid)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports})
+    all_comments = Comments.objects.filter(user=request.user, report=all_reports)
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
+
+
 
 def docDashboard(request, rid):
     # print(user_id)
     # user = User.objects.get(id=user_id)
-  
+    form = CommentForm()
+    request.session['rid']=rid
    
     all_reports= Cbc.objects.get(id=rid)
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports})
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+
+def redocDashboard(request):
+    rid=request.session['rid']
+    form = CommentForm()
+
+    all_reports= Cbc.objects.get(id=rid)
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+
+
+
+
+def addComment(request):
+    doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():  
+            obj = form.save(commit=False)
+            obj.doctor = doc
+            user=User.objects.get(id=request.session['user_id'])
+            obj.user = user
+            print(user)
+            report=Cbc.objects.get(id=request.session['rid'])
+            obj.report=report
+            obj.save()
+            print('e')
+    return redirect('redocDashboard')
+
 
 def ViewPatients(request):
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     
 
-    current_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=1)
-    pending_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=0)
+    current_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=2)
+    pending_patients = User.objects.filter(viewdoctor__doctor=doc, viewdoctor__status=1)
 
     return render(request,'HtmlFiles/viewPatients.html',context={'curr':current_patients,'name':name,'pend':pending_patients})
 
+def removeDoctor(request, doc_id):
+    print(doc_id)
+    doc = ConfirmDoctor.objects.get(viewdoctor__id=doc_id)
+    print(doc.username)
+    user=request.user or None
+    print(user)
+    print(doc)
+    v = ViewDoctor.objects.get(user=user, doctor=doc)
+    v.delete()
+
+    return redirect("userProfile")
 def pendingReq(request, user_id, ar):
     user = User.objects.get(id=user_id)
     print(user)
     doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     if(ar==1):
         a = ViewDoctor.objects.get(user=user, doctor=doc)
-        a.status = 1
+        a.status = 2
         a.save()
     elif(ar==0):
         a = ViewDoctor.objects.get(user=user, doctor=doc)
-        a.delete()
+        a.status = 3
+        a.save()
+    return redirect("viewPatients")
+
+def removePatient(request, user_id):
+    user = User.objects.get(id=user_id)
+    print(user)
+    doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    a = ViewDoctor.objects.get(user=user, doctor=doc)
+    a.delete()
     return redirect("viewPatients")
 
 def docRequest(request, doc_id):
@@ -306,7 +395,7 @@ def docRequest(request, doc_id):
     user=request.user or None
     print(user)
     print(doc)
-    v = ViewDoctor(user=user, doctor=doc)
+    v = ViewDoctor(user=user, doctor=doc, status=1)
     
     print(v)
     v.save()
@@ -328,17 +417,23 @@ def GetInfoOCR(path):
 def FILE(request):
     name=request.user.username or None
     context = {}
+   
     if request.method == 'POST':
         uploaded_file = request.FILES['document']
+    
+        namess=request.POST.get('reportname')
+        filepassword=request.POST.get('password')
+        print(filepassword)
+    
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
         if(uploaded_file.name.endswith(".pdf")):
-            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file)
-            user = request.user.get_username()
-
-            # cbc = Cbc()
-            # cbc.user = request.user
+            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
+            cbc=Cbc()
+            cbc.user = request.user
+            cbc.name=namess
+            
             # cbc.rbc = rbc
             # cbc.wbc = wbc
             # cbc.pc = pc
@@ -348,8 +443,6 @@ def FILE(request):
             # cbc.mpv= mpv
             # cbc.pcv= pcv
             # cbc.mcv= mcv
-
-            # cbc.save()
             initial = {'rbc': rbc,
                     'wbc': wbc,
                     'pc': pc,
@@ -359,8 +452,14 @@ def FILE(request):
                     'mpv': mpv,
                     'pcv': pcv,
                     'mcv': mcv,
+                    'name':namess,
+                    
+                    
                     }
+           
+          
             form = ConfirmForm(initial=initial)
+            # cbc.save()
             context = {
                 'form': form
             }
@@ -392,7 +491,10 @@ def FILE(request):
     return render(request, 'HtmlFiles/FILE.html', {'name':name})
 
 def Doctorlogin(request):
-            if request.method == 'POST':
+    # if request.session['ConfirmDoctor_id']:
+    #       return redirect('viewPatients')
+    # else:
+        if request.method == 'POST':
                 username = request.POST.get('name')
                 password =request.POST.get('password') 
                 
@@ -409,25 +511,8 @@ def Doctorlogin(request):
 	
                         
         
-            return render(request, 'HtmlFiles/Doctorlogin.html')
-
-def Doctorlogout_view(request):
-		del request.session['ConfirmDoctor_id']
-		messages.info(request, "You have successfully logged out.") 
-		return redirect("Doctorlogin")
-
-def docViewReports(request, user_id):
-    user = User.objects.get(id =user_id)
-    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
-    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports})
-
-def reports(request):
-    user=request.user or None
-    name=request.user.username or None
-    print(user)
-    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
-    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name})
-
+        return render(request, 'HtmlFiles/Doctorlogin.html')
+        
 def doctorProfile(request):
     context={}
     print(request.session['ConfirmDoctor_id'])
@@ -440,7 +525,7 @@ def dgetEditProfile(request):
     instance = Doctor.objects.get(confirmdoctor = confirm_doc)
     form = EditProfileDoctor(instance=instance)
 
-    return render(request,'HtmlFiles/dEditProfile.html',context={'form':form})
+    return render(request,'HtmlFiles/deditProfile.html',context={'form':form})
 
 def dEditProfile(request):   
     if request.method == "POST":
@@ -450,25 +535,43 @@ def dEditProfile(request):
         editform = EditProfileDoctor(request.POST, instance = instance)
         if editform.is_valid():
             editform.save()
-            return redirect('doctorProfile')		
+        return render('doctorProfile')	
+def Doctorlogout_view(request):
+		del request.session['ConfirmDoctor_id']
+		messages.info(request, "You have successfully logged out.") 
+		return redirect("Doctorlogin")
+
+def docViewReports(request, user_id):
+    user = User.objects.get(id =user_id)
+    request.session['user_id']=user_id
+    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
+    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports})
+
+def reports(request):
+    user=request.user or None
+    name=request.user.username or None
+    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
+    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name})
+
 
 def loginPage(request):
-		if request.method == 'POST':
-			username = request.POST.get('name')
-			password =request.POST.get('password') 
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('name')
+            password =request.POST.get('password') 
+            user = authenticate(request,username=username,password=password)
+            if user is not None:
+                if user.is_active:
+                        login(request, user)
+                        
+                        return redirect('home')
+            else:
+                            messages.error(request,'username or password not correct')
 
-
-
-			user = authenticate(request,username=username,password=password)
-			if user is not None:
-				if user.is_active:
-					login(request, user)
-					
-					return redirect('home')
-			else:
-					messages.error(request,'username or password not correct')
-	
-		return render(request, 'HtmlFiles/login.html')
+        return render(request, 'HtmlFiles/login.html')
+        
 
 def logout_view(request):
 		logout(request)
@@ -485,7 +588,10 @@ def userProfile(request):
 
     name=request.user.username or None
     all_users= User.objects.get(pk = request.user.pk)  
-    return render(request,'HtmlFiles/userProfile.html',context={'name':name,'all_users':all_users})
+    user = request.user
+    all_doctors = ViewDoctor.objects.filter(user=user, status=2)
+    print()
+    return render(request,'HtmlFiles/userProfile.html',context={'name':name,'all_users':all_users, 'all_doctors':all_doctors})
 
 def editProfile(request):   
     if request.method == "POST":

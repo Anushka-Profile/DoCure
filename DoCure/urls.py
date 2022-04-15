@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from home import views
+
 from django.contrib.auth import views as auth_views
 urlpatterns = [
         path('admin/', admin.site.urls),
@@ -49,7 +50,12 @@ path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('getEditProfile/', views.getEditProfile, name="getEditProfile"),
   path('docViewReports/<int:user_id>/', views.docViewReports, name="docViewReports"),
   path('docDashboard/<int:rid>/', views.docDashboard, name="docDashboard"),
-  path('dEditProfile/', views.dEditProfile, name="dEditProfile"),
-  path('dgetEditProfile/', views.dgetEditProfile, name="dgetEditProfile"),
   path('doctorProfile/', views.doctorProfile, name="doctorProfile"),
+   path('deditProfile/', views.dEditProfile, name="deditProfile"),
+  path('dgetEditProfile/', views.dgetEditProfile, name="dgetEditProfile"),
+ path('removePatient/<int:user_id>', views.removePatient, name="removePatient"),
+  path('removeDoctor/<int:doc_id>', views.removeDoctor, name="removeDoctor"),
+  path('addComment/', views.addComment, name="addComment"),
+  path('redocDashboard/', views.redocDashboard, name="redocDashboard"),
+
 ]

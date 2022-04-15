@@ -48,8 +48,11 @@
           <a class="nav-link btn btn-outline-primary btn-sm  "role="button" style="color: black" <a href="{% url 'Doctorregister' %}">SignUp
             <span class="sr-only"></span></a>
         </li>
+       
+					
       </ul>
     </div>
+    
   </nav>
 </div>
 </div>
@@ -62,13 +65,14 @@
           {% csrf_token %}
           <h1>Register as  Doctor</h1>
      
-         
+         <div class="scroll">
 	                    	{{ register_form|crispy}}     
                          
                         <input type="submit" value="Register">
                         <div class="signup_link">
                           Already a member? <a href="/Doctorlogin/">Signup</a>
                         </div>
+                      </div>
 	</form>
 
 </div>

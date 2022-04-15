@@ -21,8 +21,8 @@
 					<li><a href="/viewPatients/">HOME</a></li>
 
 					
-					<li style="color:white"><a href="/dEditProfile/">{{name.username}}</li></a>
-					<li><a  href="/logout/">Logout</a></li>
+					<li style="color:white"><a href="/doctorProfile/">{{name.username}}</li></a>
+					<li><a  href="/Doctorlogout_view/">Logout</a></li>
 					{% endif %}
 		
 				
@@ -41,6 +41,7 @@
         <th>Option</th>
       </tr>
     {% for p in curr %}
+
     <td>
         
         <h2>{{p.username}}</h2>
@@ -48,7 +49,9 @@
     <td>
         <div style="text-align: center;">
             <a href="{% url 'docViewReports' p.id %}"class="accept" name="{{i}}"
-                data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div>
+                data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div>  &nbsp
+                <a href="{% url 'removePatient' p.id %}"class="deny" name="remove"
+                data-target="#loginModal1" value="reject">Remove Patient<span class="fa fa-check"></span></a>
         </tr>
         {% endfor %}
         </td>

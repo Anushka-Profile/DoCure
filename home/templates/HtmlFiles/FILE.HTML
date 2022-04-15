@@ -7,14 +7,13 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
  
-<title>DoCure</title>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{% static 'users/css/file.css' %}">
 
 
   <!--Font awesome link-->
@@ -32,67 +31,136 @@
    
 
 
-<body>
-  
-	<div class="container">
-		<div class="navbar">
+<nav class="navbar navbar-expand-lg navbar-light  sticky-top" style="background-color ">
+  <a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="150"
+    height="60"></a>
+</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-			<a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-				height="60"></a>
-		   
-			{% if user.is_authenticated %}
-			{% csrf_token %}
-			<nav>
-				<ul>
-					<li><a href="/home/">HOME</a></li>
-          <li style="color:white">{{name}}</li>
-					
+  <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" tyle="margin-top:10px" C <a href="{% url 'home' %}">Home <span
+            class="sr-only">(current)</span></a>
+      </li>
+      &nbsp&nbsp
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <li style="margin-top:10px" C>{{name}}</li>
+      				
       {% endif %}
-				
-				</ul>
 
-			</nav>
+    </ul>
+  </div>
+</nav>
+ 
 
-		</div>
 
-		
-<div>
 
 	
 {% block content %}
+
+
   <form method="post"  enctype="multipart/form-data">
     {% csrf_token %}              
-                   
-                    <input   type="file" name="document" multiple><br>
+
+    <label><font size="+2">Name:</label></font>
+  
+    &nbsp  &nbsp  &nbsp  &nbsp &nbsp&nbsp&nbsp&nbsp &nbsp  &nbsp  &nbsp  &nbsp  &nbsp  &nbsp  &nbsp<input  class="filename" type="text" name='reportname'><BR>
+    <label><font size="+2">Password if any:</label></font>
+    &nbsp  &nbsp
+    <input  class="passwords" type="text" name='password'><br>
+    <div>
+      <br>
+          <input  class="upload" type="file" name="document" multiple> </div><br>
                     
                     <p>Drag Your Image or PDF report in this area.</p>
-
-                    
+  
 <button onclick="myFunction()" class="buttons">Upload</button></a>
-<script>
-  function myFunction() {
-    let passwords = prompt("Please enter your pdf  password if any or ignore");
-  }
-  </script>
+
                    
                     
                 
           
-        </form>
-        {% if url %}
-        <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
-      {% endif %}
-     
+
             </form>
+          
    
     
    
 
     {% endblock %} 
-
+          </div>
     <style>
+   
+      .passwords{
+        width:50% !important;
+      }
+      .filename{
+        width:50% !important;
+      }
+        body{
+          background-image: url("{% static 'images/BG.jpg' %}");
+           background-size: cover;
+        }
     
-
+    
+     
+        form{
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-top: -100px;
+          margin-left: -250px;
+          width: 500px;
+          height: 200px;
+         
+          
+        }
+        form p{
+          width: 100%;
+          height: 10%;
+          text-align: center;
+          position:absolute;
+          margin-top:-100px;
+          color: black;
+          font-family: Arial;
+        }
+        form div{
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          outline: none;
+        
+          border: 4px dashed black;
+        }
+        .upload{
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          outline: none;
+          opacity:0;
+          border: 4px dashed black;
+        }
+        
+        /* additions */
+        .btn-inline {
+          height: 50px;
+          border-radius: 0 4px 4px 0;
+          margin-left: 0;
+        }
+        .buttons{
+          font-size:20px;
+          margin-left:190px;
+        }
+        
+        
+        
       </style>
       
       
@@ -100,11 +168,8 @@
 
     <script>
       $(document).ready(function(){
-        $('form input').change(function () {
+        $('upload').change(function () {
           $('form p').text(this.files.length + " file(s) selected");
         });
       });
-    </script>
-  </body>
-  </html>
-
+    </>

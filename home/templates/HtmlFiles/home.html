@@ -4,44 +4,49 @@
 <head>
 	<title>DoCure</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'users/css/home.css' %}">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
 
 </head>
 <body>
 
-	<div class="container">
-		<div class="navbar">
-
-			<a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-				height="60"></a>
-		   
-			{% if user.is_authenticated %}
-			{% csrf_token %}
-			<nav>
-				<ul>
-					<li><font size="+1"><a href="/home/">HOME</a></li></font>
-					<li><font size="+1"><a href="/viewmyreports/">My Reports</a></li></font>
-					<li><font size="+1"><a  href="/FILE/">Upload</a></li></font>
-					
-					<li style="color:white"><font size="+1"><a  href="/userProfile/">{{name}}</li></font>
-					<li><font size="+1"><a  href="/logout/">Logout</a></li></font>
+		<nav class="navbar">
+			<div class="content">
+			  <div class="logo">
+			 <a href="{% url 'home' %}"><img src='{% static 'images/logo1.jpeg' %}' width="90"
+					height="30"></a>
+			  </div>
+			  {% if user.is_authenticated %}
+			  {% csrf_token %}
+			  <ul class="menu-list">
+				<div class="icon cancel-btn">
+				  <i class="fas fa-times"></i>
+				</div>
+				<li><a href="/home/">Home</a></li>
+				<li><a href="/viewmyreports/">My Reports</a></li>
+				<li><a  href="/FILE/">Upload</a></li>
+				<li style="color: #1C3144"><a  href="/userProfile/">{{name}}</li>
+				<li><a  href="/logout/">Logout</a></li>
 					
       {% endif %}
-				
-				</ul>
-
-			</nav>
-
+			  </ul>
+			  <div class="icon menu-btn">
+				<i class="fas fa-bars"></i>
+			  </div>
+			</div>
+		  </nav>
 		</div>
+	
+		<div class="container">
 
 		<div class="row">
 			<div class="col">
-				<h1>DoCure</h1>
-				<h2 style="color:white">
-					Smarter way to store your medical reports.
-				</h2>
+				<h1>DOCure</h1>
+				<h2 class="ml3">Smarter way to store your medical reports.</h2>	
 			</div>
+
 			<div class="col">
 				<div class="card card1">
+					
 					<h5><a href="/FILE/" style='color:white'>Upload Reports</h5>
 					<p>Start uploading your medical reports.</p>
 				</div>
@@ -63,5 +68,26 @@
 		</div>		
 	</div>
 
+	<script>
+		// Wrap every letter in a span
+		var textWrapper = document.querySelector('.ml3');
+		textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+		anime.timeline({loop: false})
+		.add({
+			targets: '.ml3 .letter',
+			opacity: [0,1],
+			easing: "easeInOutQuad",
+			duration: 1800,
+			delay: (el, i) => 150 * (i+1)
+		}).add({
+			targets: '.ml3',
+			opacity: 1,
+			duration: 1000,
+			easing: "easeOutExpo",
+			delay: 1000
+		});
+
+	</script>
 </body>
 </html>

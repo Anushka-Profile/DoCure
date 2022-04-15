@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 
 <head>
+
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,6 +22,50 @@
 </head>
 
 <body>
+  <script type="text/javascript">
+  function validate(form) {
+      var empt = document.getElementById('id_email').value;
+      var fname = document.getElementById('id_email');
+      var ages = document.getElementById('id_age').value;
+      var agen = document.getElementById('id_age');
+      var hei = document.getElementById('id_height').value;
+      var heig= document.getElementById('id_height');
+      var wei= document.getElementById('id_weight').value;
+      var weig= document.getElementById('id_weight');
+      var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      var we=/^\d{1,3}(kg|lb)$/;
+      var age =/^200|1\d\d|[1-9]?\d$/;
+      var he=/^[0-9]+ ?(\'|ft|cm|meters|feet|in|inches|\")?( *[1-9]+ ?(\"|inches|in|cm)?)?$/;
+      if (re.test(empt)) {
+        if (he.test(hei)){
+          if (age.test(ages)){ 
+            if (we.test(wei)){
+          document.getElementById("myForm").submit();
+          return true;}
+          else{
+            weig.style.border = "red solid 3px";
+          return false;
+          }
+        }
+        else {
+          agen.style.border = "red solid 3px";
+          return false;
+      }
+        }
+        else {
+          heig.style.border = "red solid 3px";
+          return false;
+      }
+      }
+       
+    else {
+        fname.style.border = "red solid 3px";
+        return false;
+    }
+    
+    }
+   
+  </script>
   <!--Navbar-->
   <nav class="navbar navbar-expand-lg navbar-light  sticky-top" style="background-color: #	FF66FF">
     <a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
@@ -59,23 +104,25 @@
 
       <div class="center">
     
-        <form method="post">
+        <form id="myForm" method="post">
           {% csrf_token %}
           <h1>Register</h1>
           <div class="scroll">
          
 	                    	{{ register_form|crispy}}     
                          
-                        <input type="submit" value="Register">
+                        <input type="button" onclick="validate()"  value="Register">
                         <div class="signup_link">
                           Already a member? <a href="/login/">Signup</a>
                         </div>
 	</form>
+  
 
 </div>
             
         
 
+</div>
 
 
 

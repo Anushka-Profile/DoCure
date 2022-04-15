@@ -142,7 +142,20 @@
             position: relative;
             text-align: justify;
           }
-          
+          .numberCircle {
+            border-radius: 50%;
+            width: 200px;
+            height: 80px;
+            padding: 20px;
+            margin-left:50px;
+           align:center;
+            background: #fff;
+            border: 2px solid orange;
+            color: #666;
+            text-align: center;
+        
+            font: 32px Arial, sans-serif;
+        }
           .popup h2 {
             margin-top: 0;
             color: #333;
@@ -333,20 +346,27 @@
             <div id="recipeCarousel" class="carousel slide w-100" data-ride="carousel">
                 <div class="carousel-inner w-100" role="listbox">
                     <div class="carousel-item active">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="card">
                     
                         <div class="card-body">
-                            {% if all_report %}
-                            <p ><span><font size="+2">Platelet Count</font></bold></span></p>
-               
-                           {% endif %}
-                           <div class="progress">
-                            <div class="bar" style="width:35%">
-                                <p class="percent">{{all_report.pc}}</p>
-                            </div>
-                        </div>
+                            {% if all_report.pc > 4000000  %}
                             
+                            <p ><span style="color:red;"><font size="+2">Platelet Count</font></bold></span></p>
+                            {% elif  all_report.pc < 15000000 %}
+                            <p ><span style="color:green;"><font size="+2">Platelet Count</font></bold></span></p>
+                             
+                             {% else %}
+                             <p ><span style="color:yellow;"><font size="+2">Platelet Count</font></bold></span></p>
+                             {% endif %}
+                           
+                    {% if all_report %}
+                           <div class="numberCircle">{{all_report.pc}}</div>   {% endif %}
+                          
+                       
+
+             
+        
                         </div>
                     </div>
                         </div>
@@ -356,16 +376,22 @@
                             <div class="card">
                      
                         <div class="card-body">
+                            {% if all_report.rbc > 6.1 %}
+                            
+                            <p ><span style="color:red;"><font size="+2">Red Blood Cells</font></bold></span></p>
+                            {% elif  all_report.rbc < 4.2 %}
+                            <p ><span style="color:red;"><font size="+2">Red Blood Cells</font></bold></span></p>
+                             
+                             {% elif 4.42 < all_report.rbc < 6.61 %}
+                             <p ><span style="color:yellow;"><font size="+2">Red Blood Cells</font></bold></span></p>
+                             {% endif %}
+                           
                             {% if all_report %}
-                            <p ><span><font size="+2">Red Blood Cells</font></bold></span></p>
+                           
     
     
-                           {% endif %}
-                           <div class="progresss">
-                            <div class="bar" style="width:35%">
-                                <p class="percent">{{all_report.rbc}}</p>
-                            </div>
-                        </div>
+                           <div class="numberCircle">{{all_report.rbc}}</div>
+                            {% endif %}
                             
                         </div>
                     </div>
@@ -375,14 +401,21 @@
                         <div class="col-md-4">
                             <div class="card">
                         <div class="card-body">
+                            {% if all_report.wbc > 10000 %}
+                            
+                            <p ><span style="color:red;"><font size="+2">White Blood Cells</font></bold></span></p>
+                            {% elif  all_report.wbc < 5000 %}
+                            <p ><span style="color:green;"><font size="+2">White Blood Cells</font></bold></span></p>
+                             
+                             {% else %}
+                             <p ><span style="color:yellow;"><font size="+2">White Blood Cells</font></bold></span></p>
+                             {% endif %}
                             {% if all_report %}
-                            <p ><span><font size="+2">White Blood Cells</font></bold></span></p>
-                            <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.wbc}}</p>
-                                </div>
-                            </div>
+                           
+                            
     
+                         
+                           <div class="numberCircle">{{all_report.wbc}}</div>
                            {% endif %}
                             
                         </div>
@@ -394,13 +427,20 @@
                             <div class="card">
                    
                         <div class="card-body">
+                            {% if all_report.hgb > 16 %}
+                            
+                            <p ><span style="color:red;"><font size="+2">Hemoglobin</font></bold></span></p>
+                            {% elif  all_report.hgb < 12 %}
+                            <p ><span style="color:green;"><font size="+2">Hemoglobin</font></bold></span></p>
+                             
+                             {% else %}
+                             <p ><span style="color:yellow;"><font size="+2">Hemoglobin</font></bold></span></p>
+                             {% endif %}
                             {% if all_report %}
-                            <p ><span><font size="+2">Hemoglobin</font></bold></span></p>
-                               {% endif %} <div class="progresss">
-                            <div class="bar" style="width:35%">
-                                <p class="percent">{{all_report.hgb}}</p>
-                            </div>
-                        </div>
+                        
+                             
+                               <div class="numberCircle">{{all_report.hgb}}</div>  {% endif %} 
+                            
                            
                         </div>
                     </div>
@@ -411,15 +451,18 @@
                              <div class="card">
                      
                         <div class="card-body">
+                            {% if all_report.rcd > 14.6 %}
+                            
+                            <p ><span style="color:red;"><font size="+2">Red Cell Distribution</font></bold></span></p>
+                            {% elif  all_report.rcd < 11.6 %}
+                            <p ><span style="color:green;"><font size="+2">Red Cell Distribution</font></bold></span></p>
+                             
+                             {% else %}
+                             <p ><span style="color:yellow;"><font size="+2">Red Cell Distribution</font></bold></span></p>
+                             {% endif %}
                             {% if all_report %}
-                            <p ><span><font size="+2">Red Cell Distribution</font></bold></span></p>
-                            <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.rcd}}</p>
-                                </div>
-                            </div>
-    
-                           {% endif %}
+                           
+                           <div class="numberCircle">{{all_report.rcd}}</div> {% endif %}
                             
                         </div>
                     </div>
@@ -428,63 +471,86 @@
                     <div class="carousel-item">
                         <div class="col-md-4">
                             <div class="card card-body">
+                                {% if all_report.mchc > 36 %}
+                            
+                                <p ><span style="color:red;"><font size="+1">Mean Corpuscular Hb Conc</font></bold></span></p>
+                                {% elif  all_report.mchc < 33 %}
+                                <p ><span style="color:green;"><font size="+1">Mean Corpuscular Hb Conc</font></bold></span></p>
+                                 
+                                 {% elif  33.2 < all_report.mchc < 35.5 %}
+                                 <p ><span style="color:yellow;"><font size="+1">Mean Corpuscular Hb Conc</font></bold></span></p>
+                                 {% endif %}
                                 {% if all_report %}
-                                <p ><span><font size="+1">Mean Corpuscular Hb Conc</font></bold></span></p>
+                    
         
-                               {% endif %}
-                               <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.mchc}}</p>
-                                </div>
-                            </div>
+                              
+                               <div class="numberCircle">{{all_report.mchc}}</div> {% endif %}
+                            
                             </div>
                         </div>
                     </div>
                     <div class="carousel-item">
                         <div class="col-md-4">
                             <div class="card card-body">
+                                {% if all_report.mpv > 12.5 %}
+                            
+                                <p ><span style="color:red;"><font size="+2">Mean Platelet Volume</font></bold></span></p>
+                                {% elif  all_report.mpv < 7.5 %}
+                                <p ><span style="color:green;"><font size="+2">Mean Platelet Volume</font></bold></span></p>
+                                 
+                                 {% else %}
+                                 <p ><span style="color:yellow;"><font size="+2">Mean Platelet Volume</font></bold></span></p>
+                                 {% endif %}
                                 {% if all_report %}
-                                <p ><span><font size="+2">Mean Platelet Volume</font></bold></span></p>
+                              
         
         
-                               {% endif %}
-                               <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.mpv}}</p>
-                                </div>
-                            </div>
+                       
+                               <div class="numberCircle">{{all_report.mpv}}</div> {% endif %}
+                            
                             </div>
                         </div>
                     </div>
                     <div class="carousel-item">
                         <div class="col-md-4">
                             <div class="card card-body">
+                                {% if all_report.pcv > 1000 %}
+                            
+                                <p ><span style="color:red;"><font size="+2"></font></bold></span></p>
+                                {% elif  all_report.pcv < 5000 %}
+                                <p ><span style="color:green;"><font size="+2">White Blood Cells</font></bold></span></p>
+                                 
+                                 {% else %}
+                                 <p ><span style="color:yellow;"><font size="+2">White Blood Cells</font></bold></span></p>
+                                 {% endif %}
                                 {% if all_report %}
-                                <p ><span><font size="+2">Packed Cell Volume</font></bold></span></p>
+                            
         
         
-                               {% endif %}
-                               <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.pcv}}</p>
-                                </div>
-                            </div>
+                      
+                               <div class="numberCircle">{{all_report.pcv}}</div> {% endif %}
+                            
                             </div>
                         </div>
                     </div>
                     <div class="carousel-item">
                         <div class="col-md-4">
                             <div class="card card-body">
+                                {% if all_report.mcv > 96 %}
+                            
+                                <p ><span style="color:red;"><font size="+2">Mean Cell Volume</font></bold></span></p>
+                                {% elif  all_report.mcv < 80 %}
+                                <p ><span style="color:green;"><font size="+2">Mean Cell Volume</font></bold></span></p>
+                                 
+                                 {% else %}
+                                 <p ><span style="color:yellow;"><font size="+2">Mean Cell Volume</font></bold></span></p>
+                                 {% endif %}
                                 {% if all_report %}
-                                <p ><span><font size="+2">Mean Cell Volume</font></bold></span></p>
+                               
         
-        
-                               {% endif %}
-                               <div class="progresss">
-                                <div class="bar" style="width:35%">
-                                    <p class="percent">{{all_report.mcv}}</p>
-                                </div>
-                            </div>
+                              
+                               <div class="numberCircle">{{all_report.mcv}}</div> {% endif %}
+                            
                             </div>
                         </div>
                     </div>
@@ -517,7 +583,7 @@
             <td>RBC</td>
             <td>4.2-6.1 million cells/mcL</td>
             {% if all_report %}
-            <td>{{all_report.rbc}} million cells/mcL</td>
+            <td >{{all_report.rbc}} million cells/mcL</td>
             {% endif %}
             <td>
               
@@ -914,6 +980,13 @@
           </div>
     
     <!---naverbar-2-->
+    <div>
+        <h1>Doctor Comments</h1>
+        {% for c in all_comments %}
+            <h2>{{c.doctor.username}}</h2>
+            <p>{{c.field_name}}</p>
+        {% endfor %}
+    </div>
     
     
     <script>

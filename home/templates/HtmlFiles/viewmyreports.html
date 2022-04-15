@@ -55,7 +55,7 @@
           {% for i in posts %}
         <tr>
              <td>{{i.date}}</td>
-             <td>{{i.user}}</td>
+             <td>{{i.name}}</td>
              <td><div style="text-align: center;">
                 <a href="{% url 'dashboard' i.id%}"class="accept" name="{{i}}"
                     data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div></td>

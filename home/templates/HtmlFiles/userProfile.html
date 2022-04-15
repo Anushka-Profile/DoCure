@@ -111,6 +111,40 @@
 			  </div>
 			</div>
 		  </div>
+		  <h1>Your Doctors</h1>
+
+		{% for i in all_doctors %}
+
+
+
+                    
+            
+                
+                     <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div style="text-align: center; ">
+                                       
+                                        <h3 class="card-title"><b>Name:{{i.doctor.doctor.username}}</b></h3>
+                                      
+                                        <p class="card-tetx"> <b>Gender:{{i.doctor.doctor.gender}}</b></p></p>
+                                        <p class="card-tetx"> <b>Specialization:{{i.doctor.doctor.Specialization}}</b></p></p>
+                                        <div class="mx-2">
+                                            <a href="{% url 'removeDoctor' i.id%}"><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-danger btn-m" data-toggle="modal" 
+                                                data-target="#loginModal1" value="{{i}}">Remove Doctor</button></a>
+                                        </div>
+                                       
+                                    
+                                       
+                                    
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <br><br>
+                            </div>
+                    
+                           {% endfor %}
 
 <style>
 	.student-profile .card {

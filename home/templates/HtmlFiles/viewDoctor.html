@@ -56,7 +56,10 @@
         <section id="gallery">
             <div class="container"style="text-align: center; ">
                 <div class="row">
+                    
                     {% for i in d1 %}
+
+                    
             
                 
                      <div class="col-md-4">
@@ -66,12 +69,32 @@
                                        
                                         <h3 class="card-title"><b>Name:{{i.username}}</b></h3>
                                       
-                                        <p class="card-tetx"> <b>Gender:{{i.gender}}</b></p></p>
-                                        <p class="card-tetx"> <b>Specialization:{{i.Specialization}}</b></p></p>
-                                        </div>
+                                        <p class="card-tetx"> <b>Gender:{{i.doctor.gender}}</b></p></p>
+                                        <p class="card-tetx"> <b>Specialization:{{i.doctor.Specialization}}</b></p></p>
+                                        {% if i.status == 0 %}
                                         <div class="mx-2">
                                             <a href="{% url 'docRequest' i.id%}"><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-success btn-m" data-toggle="modal" 
-                                                data-target="#loginModal1" value="{{i}}">BOOK</button></a>
+                                                data-target="#loginModal1" value="{{i}}">book</button></a>
+                                        </div>
+                                        {% elif i.status == 1 %}
+                                        <div class="mx-2">
+                                            <a href=""><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-success btn-m" data-toggle="modal" 
+                                                data-target="#loginModal1" value="{{i}}">Pending</button></a>
+                                        </div>
+                                        {% elif i.status == 2 %}
+                                        <div class="mx-2">
+                                            <a href=""><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-success btn-m" data-toggle="modal" 
+                                                data-target="#loginModal1" value="{{i}}">Accepted</button></a>
+                                        </div>
+                                        {% elif i.status == 3 %}
+                                        <div class="mx-2">
+                                            <a href=""><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-success btn-m" data-toggle="modal" 
+                                                data-target="#loginModal1" value="{{i}}">Rejected</button></a>
+                                        </div>
+                                        {% endif %}
+                                    
+                                       
+                                    
                                         </div>
                                         
                                     </div>
@@ -81,7 +104,6 @@
                     
                            {% endfor %}
                             
-                    
                     
                 </div>
             </div>

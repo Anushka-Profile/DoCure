@@ -10,7 +10,7 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-   {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'users/css/register.css' %}"> {% endcomment %}
+   <link rel="stylesheet" type="text/css" href="{% static 'users/css/main.css' %}">
 
 
   <!--Font awesome link-->
@@ -33,17 +33,21 @@
     <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" style="color: black" <a href="{% url 'home' %}">Home <span
+          <a class="nav-link" style="color: black" <a href="{% url 'viewPatients' %}">Home <span
               class="sr-only">(current)</span></a>
         </li>
 
-       
+        <li class="nav-item active" style="padding: 5px; width: 100px;">
+          <a class="nav-link btn btn-outline-primary btn-sm" style="color: black" role="button"<a href="{% url 'login' %}">LogIn
+            <span class="sr-only"></span></a>
+        </li>
+
+        
       </ul>
     </div>
   </nav>
 
 <style>
-  
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
   *{
     margin: ;
@@ -60,14 +64,28 @@
     height: 150vh;
     overflow: hidden;
   }
- 
-  
-form{
-    padding: 0 800px;
-    align:center;
-   
+  .center{
+    position: absolute;
+    top: 30%;
+    margin-top:150px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 455px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 10px 10px 15px rgba(0,0,0,0.05);
+  }
+  .center h1{
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid silver;
+  }
+  .center form{
+    padding: 0 40px;
+    
     box-sizing: border-box;
   }
+  
   
   .pass{
     margin: -5px 0 20px 5px;
@@ -119,7 +137,7 @@ div.scroll {
 </style> 
 <body>
 
-    <form action="/dEditProfile/" method="post">
+    <form action="/deditProfile/" method="post">
   <div class="scroll">
         {% csrf_token %}
         {{form|crispy}}

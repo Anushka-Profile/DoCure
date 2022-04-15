@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User,Cbc,ConfirmDoctor,Comments
+from .models import User,Cbc,ConfirmDoctor
+from .models import Comments
 from django.contrib.auth.hashers import make_password
 
 from home import models
@@ -8,22 +9,24 @@ from home import models
 # you have to pass string as parameter
 password = "123"
 make_password(password)
-
+from django.core.validators import RegexValidator
     
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    
     username= forms.CharField(label='Usename', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your username'}))
     first_name= forms.CharField(label='First_name', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Firstname'}))
     last_name= forms.CharField(label='Last_name', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Lastname'}))
-    email= forms.CharField(label='Email', 
-                    widget=forms.TextInput(attrs={'placeholder': 'Enter your Email-id'}))
+    email= forms.EmailField(label='Email', 
+                    widget=forms.TextInput(attrs={'placeholder': 'username@gmail.com'}))
+    # age_regex=RegexValidator(r'^s[0-1]{1}[0-9]{0,2}')
     age= forms.IntegerField(label='Age', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Age'}))
     height= forms.IntegerField(label='Height', 
-                    widget=forms.TextInput(attrs={'placeholder': 'Enter your Height in CM'}))
+                    widget=forms.TextInput(attrs={'placeholder': 'Enter your Height in cm/inches/ft'}))
     weight= forms.IntegerField(label='Weight', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Weight in Kg'}))
     
@@ -44,7 +47,7 @@ class ConfirmDoctor(forms.ModelForm):
     class Meta:
         model = ConfirmDoctor
         fields = ('username','password')
-    
+
 
 from .models import Doctor
 class DoctorForm(forms.ModelForm):
@@ -57,6 +60,7 @@ class DoctorForm(forms.ModelForm):
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Email-id'}))
     phone_number= forms.CharField(label='phonenumber', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Correct Phone Number'}))
+    
    
     
     
@@ -78,10 +82,13 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comments
         fields = ("field_name",)
+
 class ConfirmForm(forms.ModelForm):
+    
     class Meta:
         model = Cbc
-        fields = ("rbc","wbc","pc","hgb","rcd","mchc","mpv","pcv","mcv")
+        fields = ("rbc","wbc","pc","hgb","rcd","mchc","mpv","pcv","mcv","name")
+        
 class EditProfileDoctor(forms.ModelForm):
     class Meta:
         model = Doctor
