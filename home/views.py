@@ -49,11 +49,17 @@ from django.contrib.auth.hashers import make_password
 from .models import *
 
 def home(request):
-	name=request.user.username or None
-	return render(request,'HtmlFiles/home.html',{'name':name})
+    name=request.user.username or None
+    # if request.user.is_authenticated:
+    #         return redirect('home')
+    # else:
+    return render(request,'HtmlFiles/home.html',{'name':name})
 
 def homebefore(request):
-            return render(request,'HtmlFiles/homebefore.html')
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        return render(request,'HtmlFiles/homebefore.html')
 
 def Doctorhome(request):
             name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
@@ -89,6 +95,10 @@ def viewDoctor(request):
     
     return render(request,'HtmlFiles/viewDoctor.html',context={'name':name,'d1':d1})
 def Doctorregister(request):
+    # if  (request.session['ConfirmDoctor_id']==True):
+        
+    #     return redirect('viewPatients')
+    # else:
         if request.method == "POST":
             form = DoctorForm(request.POST)
             if form.is_valid():
@@ -123,6 +133,9 @@ def confirmForm(request):
 
 
 def registerPage(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
         if request.method == "POST":
             form = NewUserForm(request.POST)
             if form.is_valid():
@@ -136,8 +149,7 @@ def registerPage(request):
                         messages.success(request, "Registration successful.")
 
                         return redirect("login")
-            # messages.error(
-            #     request, "Unsuccessful registration. Invalid information.")
+            messages.error(request, "Unsuccessful registration. Invalid information.")
         form = NewUserForm()
         return render(request, context={'register_form': form}, template_name='HtmlFiles/register.html')
 
@@ -490,10 +502,14 @@ def FILE(request):
 
     return render(request, 'HtmlFiles/FILE.html', {'name':name})
 
+from django.views.decorators.cache import cache_control
+
+
 def Doctorlogin(request):
-    # if request.session['ConfirmDoctor_id']:
-    #       return redirect('viewPatients')
-    # else:
+    if  (request.session['ConfirmDoctor_id']==True):
+        
+         return redirect('viewPatients')
+    else:
         if request.method == 'POST':
                 username = request.POST.get('name')
                 password =request.POST.get('password') 
@@ -502,9 +518,11 @@ def Doctorlogin(request):
 
 
                 user = ConfirmDoctor.objects.filter(username=username,password=password).values()[0]
+                # request.session['ConfirmDoctoR']='9555'
                 if user is not None:
                         # login(request, user)
                         request.session['ConfirmDoctor_id']=user['id']
+                        # request.session['ConfirmDoctoR']='123'
                         return redirect('viewPatients')
                 else:
                         messages.error(request,'username or password not correct')
@@ -557,7 +575,7 @@ def reports(request):
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
-    else:
+    else:    
         if request.method == 'POST':
             username = request.POST.get('name')
             password =request.POST.get('password') 
@@ -568,7 +586,7 @@ def loginPage(request):
                         
                         return redirect('home')
             else:
-                            messages.error(request,'username or password not correct')
+                        messages.error(request,'username or password not correct')
 
         return render(request, 'HtmlFiles/login.html')
         

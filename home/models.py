@@ -16,7 +16,6 @@ from django.utils import timezone
 # Create your models here.
 
 class User(AbstractUser):
-    age=models.IntegerField(null=False, default=0)
     gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     height=models.IntegerField(null=False, default=0)
     weight=models.IntegerField(null=False, default=0)
@@ -30,8 +29,7 @@ class Doctor(models.Model):
     username=models.CharField(max_length=100)
     Surname=models.CharField(max_length=100)
     email=models.CharField(max_length=250,unique=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=False) # Validators should be a list
+    phone_number = models.CharField(max_length=17,blank=False, unique=True) # Validators should be a list
     Specialization=models.CharField(choices=[('Orthopedics','Orthopedics'),(' Internal Medicine',' Internal Medicine'),('Obstetrics and Gynecology','Obstetrics and Gynecology'),('Dermatology','Dermatology'),('Pediatrics','Pediatrics'),('General Surgery','General Surgery')],max_length=50)
     gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     USERNAME_FIELD = 'username'
