@@ -2,6 +2,7 @@ from multiprocessing import context
 from site import USER_BASE
 from tkinter.font import names
 from tkinter.tix import Form
+from urllib import request
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
@@ -19,13 +20,13 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth import authenticate, login, logout
 from matplotlib.pyplot import rcdefaults, text
 from numpy import delete
-from platformdirs import Path
+# from platformdirs import Path
 from DoCure.settings import EMAIL_HOST_USER
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 
-from .forms  import  NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor
+from .forms  import  NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor, UploadForm
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
@@ -39,9 +40,15 @@ import re
 # import requests
 import pdfplumber
 import pandas as pd
+import os
 import pytesseract
 from PIL import Image
 from django.contrib.auth.hashers import make_password
+
+from django.core.paginator import Paginator
+
+from django.core.files.storage import default_storage
+
 
 
 
@@ -120,17 +127,6 @@ def Doctorregister(request):
 def about(request):
 	return render(request,'HtmlFiles/about.html')
 
-def confirmForm(request):
-    if request.method == 'POST':
-        form = ConfirmForm(request.POST)
-        if form.is_valid():  
-            obj = form.save(commit=False)
-            obj.user = request.user
-            obj.save()
-    return redirect('viewmyreports')
-
-
-
 
 def registerPage(request):
     if request.user.is_authenticated:
@@ -178,11 +174,7 @@ def extract(text):
     wbc = wbc_re.search(text)
     if(wbc != None):
         wbc = wbc_re.search(text).group(2)
-        wbc = float(wbc.replace(',',''))
-        if(wbc>=1 and wbc<100):
-            wbc *= 1000
-        elif(wbc>=100 and wbc<1000):
-            wbc *= 10
+        wbc = float(wbc.replace(',',''))     
     elif(wbc==None):
             wbc = 0.0000000000000
             flag += 1
@@ -191,10 +183,7 @@ def extract(text):
     if(rbc != None):
         rbc = rbc_re.search(text).group(2)
         rbc = float(rbc.replace(',',''))
-        if(rbc>=100 and rbc<1000):
-            rbc /= 100
-        elif(rbc>=1000 and rbc<10000):
-            rbc /= 1000
+        
     elif(rbc==None):
             rbc = 0.0000000000000
             flag += 1
@@ -203,10 +192,7 @@ def extract(text):
     if(hgb != None):
         hgb = hgb_re.search(text).group(2)
         hgb = float(hgb.replace(',',''))
-        if(hgb>=100 and hgb<1000):
-            hgb /= 10
-        elif(hgb>=1000 and hgb<10000):
-            hgb /= 100
+       
     elif(hgb==None):
             hgb = 0.0000000000000
             flag += 1
@@ -257,18 +243,7 @@ def extract(text):
     if(pc != None):
         pc = pc_re.search(text).group(2)
         pc = float(pc.replace(',',''))
-        if(pc>=1 and pc<10):
-            pc *= 1000000
-        elif(pc>=10 and pc<100):
-            pc *= 100000
-        elif(pc>=100 and pc<1000):
-            pc *= 10000
-        elif(pc>=1000 and pc<10000):
-            pc *= 1000
-        elif(pc>=10000 and pc<100000):
-            pc *= 100
-        elif(pc>=100000 and pc<1000000):
-            pc *= 10
+        
     elif(pc==None):
             pc = 0.0000000000000
             flag += 1
@@ -303,11 +278,13 @@ def extract(text):
 def GetInfo(path,filepassword):
     cbc = path
     
+
   
     with pdfplumber.open(cbc, password=filepassword) as pdf:
         page = pdf.pages[0]
         text = page.extract_text()
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = extract(text)
+    
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
    
 
@@ -318,6 +295,44 @@ def dashboard(request,rid):
   
     all_reports= Cbc.objects.get(user=request.user, id=rid)
     all_comments = Comments.objects.filter(user=request.user, report=all_reports)
+
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+  
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+  
+
+
+    print(all_reports.file.path)
     return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
 
 
@@ -329,6 +344,7 @@ def docDashboard(request, rid):
     request.session['rid']=rid
    
     all_reports= Cbc.objects.get(id=rid)
+
     return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
 
 def redocDashboard(request):
@@ -417,7 +433,7 @@ def docRequest(request, doc_id):
 
 def GetInfoOCR(path):
     cbc = path
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Users\tirth\AppData\Local\Programs\Tesseract-OCR\tesseract.exe' #enter your path here
+    pytesseract.pytesseract.tesseract_cmd = r'E:\\Programming\Django\DoCure-master\\tesseract//tesseract.exe' #enter your path here
     text = pytesseract.image_to_string(Image.open(cbc))
 
     print(text)
@@ -429,80 +445,167 @@ def GetInfoOCR(path):
 def FILE(request):
     name=request.user.username or None
     context = {}
+    rbc_final = 0
+    wbc_final = 0
+    pc_final = 0
+    hgb_final = 0
+    rcd_final = 0
+    mchc_final = 0
+    mpv_final = 0
+    pcv_final = 0
+    mcv_final = 0
+
    
     if request.method == 'POST':
-        uploaded_file = request.FILES['document']
-    
-        namess=request.POST.get('reportname')
-        filepassword=request.POST.get('password')
-        print(filepassword)
-    
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-        if(uploaded_file.name.endswith(".pdf")):
-            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
-            cbc=Cbc()
-            cbc.user = request.user
-            cbc.name=namess
+
+        try:
+            for f in request.FILES.getlist('document'): 
+                print("-----------------------------------------------------------------------------")
+                uploaded_file = f
+                print(uploaded_file)
+                print("-----------------------------------------------------------------------------")
             
-            # cbc.rbc = rbc
-            # cbc.wbc = wbc
-            # cbc.pc = pc
-            # cbc.hgb= hgb
-            # cbc.rcd= rcd
-            # cbc.mchc= mchc
-            # cbc.mpv= mpv
-            # cbc.pcv= pcv
-            # cbc.mcv= mcv
-            initial = {'rbc': rbc,
-                    'wbc': wbc,
-                    'pc': pc,
-                    'hgb': hgb,
-                    'rcd': rcd,
-                    'mchc': mchc,
-                    'mpv': mpv,
-                    'pcv': pcv,
-                    'mcv': mcv,
-                    'name':namess,
+        except Exception as e:
+            messages.error(request,'No file is uploaded.')
+        else:
+            for f in request.FILES.getlist('document'): 
+                print("-----------------------------------------------------------------------------")
+                uploaded_file = f
+                print(uploaded_file)
+                print("-----------------------------------------------------------------------------")
+                namess=request.POST.get('reportname')
+                filepassword=request.POST.get('password')
+                print(filepassword)
+                fs = FileSystemStorage()
+                name = fs.save(uploaded_file.name, uploaded_file)
+                context['url'] = fs.url(name)
+                if(namess != ""):
+                    file_name = namess
+                else:
+                    file_name = uploaded_file.name
+
+                if(uploaded_file.name.endswith(".pdf")):
+                    try:
+                        rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
+                        print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
+                    except Exception as e:
+                        messages.error(request,'Password is wrong')
+                    else:
+                        if(rbc_final == 0):
+                            rbc_final = rbc
+                        if(wbc_final == 0):
+                            wbc_final = wbc
+                        if(pc_final == 0):
+                            pc_final = pc
+                        if(hgb_final == 0):
+                            hgb_final = hgb
+                        if(rcd_final == 0):
+                            rcd_final = rcd
+                        if(mchc_final == 0):
+                            mchc_final = mchc
+                        if(mpv_final == 0):
+                            mpv_final = mpv
+                        if(pcv_final == 0):
+                            pcv_final = pcv
+                        if(mcv_final == 0):
+                            mcv_final = mcv
+                        
+                        initial = {'rbc': rbc_final,
+                                'wbc': wbc_final,
+                                'pc': pc_final,
+                                'hgb': hgb_final,
+                                'rcd': rcd_final,
+                                'mchc': mchc_final,
+                                'mpv': mpv_final,
+                                'pcv': pcv_final,
+                                'mcv': mcv_final,
+                                'name':file_name,
+                                'file':uploaded_file,
+                                }
+
+                        request.session["file_name"] = uploaded_file.name
                     
                     
+                        form = ConfirmForm(initial=initial)
+                        # cbc.save()
+                        context = {
+                            'form': form,
+                            'file_name': file_name
+                        }
+                        
+                    
+                elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                    rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
+                    user = request.user.get_username()
+
+                    if(rbc_final == 0):
+                        rbc_final = rbc
+                    if(wbc_final == 0):
+                        wbc_final = wbc
+                    if(pc_final == 0):
+                        pc_final = pc
+                    if(hgb_final == 0):
+                        hgb_final = hgb
+                    if(rcd_final == 0):
+                        rcd_final = rcd
+                    if(mchc_final == 0):
+                        mchc_final = mchc
+                    if(mpv_final == 0):
+                        mpv_final = mpv
+                    if(pcv_final == 0):
+                        pcv_final = pcv
+                    if(mcv_final == 0):
+                        mcv_final = mcv
+                
+                    initial = {'rbc': rbc_final,
+                            'wbc': wbc_final,
+                            'pc': pc_final,
+                            'hgb': hgb_final,
+                            'rcd': rcd_final,
+                            'mchc': mchc_final,
+                            'mpv': mpv_final,
+                            'pcv': pcv_final,
+                            'mcv': mcv_final,
+                            'name':file_name,
+                            'file':uploaded_file,
+                            }
+
+                    request.session["file_name"] = uploaded_file.name
+                    print(request.session["file_name"])
+                    form = ConfirmForm(initial=initial)
+                    context = {
+                        'form': form
                     }
-           
-          
-            form = ConfirmForm(initial=initial)
-            # cbc.save()
-            context = {
-                'form': form
-            }
+                else:
+                    messages.error(request,'Please upload .png, .jpg or .pdf file.')
+
             return render(request, 'HtmlFiles/confirmForm.html', context)
-        elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
-            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
-            user = request.user.get_username()
-
-            initial = {'rbc': rbc,
-                    'wbc': wbc,
-                    'pc': pc,
-                    'hgb': hgb,
-                    'rcd': rcd,
-                    'mchc': mchc,
-                    'mpv': mpv,
-                    'pcv': pcv,
-                    'mcv': mcv,
-                    }
-            form = ConfirmForm(initial=initial)
-            context = {
-                'form': form
-            }
-            return render(request, 'HtmlFiles/confirmForm.html', context)
-            
-            
-
-        
-
+                
+    # form = UploadForm()
     return render(request, 'HtmlFiles/FILE.html', {'name':name})
 
-from django.views.decorators.cache import cache_control
+
+def confirmForm(request):
+    if request.method == 'POST':
+        form = ConfirmForm(request.POST)
+        if form.is_valid():  
+            obj = form.save(commit=False)
+            obj.user = request.user
+            file_name = request.session["file_name"]
+            # f = default_storage.open(file_name, 'r')
+            if(file_name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                obj.image = file_name
+            elif(file_name.lower().endswith(('.pdf'))):
+                obj.file = file_name
+            
+
+            obj.save()
+
+    return redirect('viewmyreports')
+
+# def addAnotherFile(request):
+
+#     report = Cbc.objects.last()
 
 
 def Doctorlogin(request):
@@ -562,14 +665,37 @@ def Doctorlogout_view(request):
 def docViewReports(request, user_id):
     user = User.objects.get(id =user_id)
     request.session['user_id']=user_id
-    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
+    all_reports= Cbc.objects.filter(user=user).order_by("-date") #.filter(user=request.user)
     return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports})
 
 def reports(request):
     user=request.user or None
     name=request.user.username or None
-    all_reports= Cbc.objects.filter(user=user) #.filter(user=request.user)
+    all_reports= Cbc.objects.filter(user=user).order_by('-date')  #.filter(user=request.user)
+    p = Paginator(all_reports, 10)
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
+    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name, 'page_obj':page_obj})
+
+def deleteReport(request, rid):
+
+    report = Cbc.objects.get(id=rid)
+    print(report.name)
+    report.delete()
+
+    user=request.user or None
+    name=request.user.username or None
+    all_reports= Cbc.objects.filter(user=user).order_by('-date')  #.filter(user=request.user)
     return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name})
+
+
 
 
 def loginPage(request):

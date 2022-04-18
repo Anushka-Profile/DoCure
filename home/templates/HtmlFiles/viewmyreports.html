@@ -46,21 +46,51 @@
 <body>
     <table border="1" style="text-align: center;">
         <h4>My Reports<h4>
+        
+        {% if posts %}
        
         <tr>
             <th>Time of Report</th>
             <th>Full Username</th>
             <th>View Dashboard</th>
           </tr>
-          {% for i in posts %}
+          {% for i in page_obj.object_list %}
         <tr>
              <td>{{i.date}}</td>
              <td>{{i.name}}</td>
              <td><div style="text-align: center;">
                 <a href="{% url 'dashboard' i.id%}"class="accept" name="{{i}}"
                     data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div></td>
-        </tr>     
-        {% endfor %}   
+            <td>
+                <a href="{% url 'deleteReport' i.id %}"class="deny" name="remove"
+                data-target="#loginModal1" value="reject">Delete Report<span class="fa fa-check"></span></a>  
+            </td>
+
+                    
+        </tr>
+         
+        {% endfor %}  
+
+        {% else %}
+
+        <h2>No reports available</h2>
+
+        
+        {% endif %}
+
+        
     </table>
+
+    <center>
+        {%if page_obj.has_previous %} {# whether the previous page exists #}
+            <a href="?page={{page_obj.previous_page_number}}"><</a> {# link to the prev page #}
+        {% endif %}
+        <span>{{page_obj.number}}</span> {# the current page number #}
+        
+        {%if page_obj.has_next %} {# whether the next page exists #}
+            <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #}
+        {% endif %}
+    </center>
+
 </body>
 </html>

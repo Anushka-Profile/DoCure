@@ -22,6 +22,9 @@
 </head>
 
 
+
+<!-- <img src="{{all_report.file.url}}" alt=""> -->
+
 <body>
     <div class="containers">
 		<div class="navbar">
@@ -546,6 +549,10 @@
                                  <p ><span style="color:yellow;"><font size="+2">Mean Cell Volume</font></bold></span></p>
                                  {% endif %}
                                 {% if all_report %}
+
+                             
+
+                              
                                
         
                               
@@ -566,8 +573,22 @@
                     <span class="sr-only">Next</span>
                 </a>
             </div>
-       
- 
+
+          
+{% block link %}
+            {% if all_report.file %}
+
+            <h2>DOWNLOAD THE File FROM HERE: <a href="{{all_report.file.url}}" download>{{all_report.name}}</a></h2>
+
+            {% elif all_report.image %}
+
+            <h2>DOWNLOAD THE Image FROM HERE: <a href="{{all_report.image}}" download>{{all_report.name}}</a></h2>
+        
+        {% endif %} 
+{% endblock %}
+
+
+
     </div>
     <BR><br>
     <div style="overflow-x:auto;">  

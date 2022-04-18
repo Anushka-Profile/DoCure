@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from distutils.command.upload import upload
 import email
 from enum import unique
 from pyexpat import model
@@ -10,6 +11,7 @@ from django.contrib.auth.models import User
 
 
 from django.forms import ModelForm, NullBooleanField, PasswordInput
+from django.forms.fields import ImageField
 
 from django.utils import timezone
 
@@ -63,6 +65,14 @@ class Cbc(models.Model):
     name= models.CharField(max_length=150,null=True,blank=False)
     password=models.CharField(max_length=150,null=True,blank=True)
     date = models.DateTimeField(default=timezone.now)
+    image = models.ImageField(default=NULL, null=True)
+    file = models.FileField(default=NULL, null=True)
+
+class tempFileStorage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(default=NULL, null=True)
+
+
 class  Comments(models.Model):
      user=models.ForeignKey(User, on_delete=models.CASCADE)
      doctor=models.ForeignKey(ConfirmDoctor, on_delete=models.CASCADE)

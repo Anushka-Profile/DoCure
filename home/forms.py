@@ -78,6 +78,11 @@ class DoctorForm(forms.ModelForm):
         return user
 
 
+class UploadForm(forms.ModelForm):
+    class Meta:
+        model = Cbc
+        fields = ('name', 'file')
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comments

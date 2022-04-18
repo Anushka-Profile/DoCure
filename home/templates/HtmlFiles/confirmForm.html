@@ -51,9 +51,15 @@
         {% csrf_token %}
         {{form|crispy}}
         
-        <input type="submit" value="Confirm">
+        <input type="submit" value="Confirm" name="upload">
+    
+        
+        
+        
     </div>
+    <!-- <input type="submit" value="Confirm and add one more file" name="add"> -->
     </form>
+
   </div>
     <style>
   

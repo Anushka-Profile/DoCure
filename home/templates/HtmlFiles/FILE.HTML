@@ -64,6 +64,8 @@
 {% block content %}
 
 
+
+
   <form method="post"  enctype="multipart/form-data">
     {% csrf_token %}              
 
@@ -87,12 +89,22 @@
           
 
             </form>
-          
+            {% for message in messages %}
+    
+            <div class="alert alert-danger">
+                <a class="close" href="/FILE/" data-dismiss="alert">x</a>
+                   {{ message }}
+            </div>
+        
+        {% endfor %}
    
     
    
 
     {% endblock %} 
+
+    
+    
           </div>
     <style>
    
@@ -166,10 +178,10 @@
       
       
 
-    <script>
+    <!-- <script>
       $(document).ready(function(){
         $('upload').change(function () {
           $('form p').text(this.files.length + " file(s) selected");
         });
       });
-    </>
+    </script> -->
