@@ -61,8 +61,18 @@ def home(request):
     #         return redirect('home')
     # else:
     return render(request,'HtmlFiles/home.html',{'name':name})
+def allreports(request):
+    name=request.user.username or None
+    # if request.user.is_authenticated:
+    #         return redirect('home')
+    # else:
+    return render(request,'HtmlFiles/allreports.html',{'name':name})
 
 def homebefore(request):
+    if  'ConfirmDoctor_id' in request.session:
+        
+         return redirect('viewPatients')
+    
     if request.user.is_authenticated:
         return redirect('home')
     else:
@@ -102,10 +112,10 @@ def viewDoctor(request):
     
     return render(request,'HtmlFiles/viewDoctor.html',context={'name':name,'d1':d1})
 def Doctorregister(request):
-    # if  (request.session['ConfirmDoctor_id']==True):
+    if  'ConfirmDoctor_id' in request.session:
         
-    #     return redirect('viewPatients')
-    # else:
+         return redirect('viewPatients')
+    else:
         if request.method == "POST":
             form = DoctorForm(request.POST)
             if form.is_valid():
@@ -444,53 +454,112 @@ def GetInfoOCR(path):
 
 def FILE(request):
     name=request.user.username or None
-    context = {}
-    rbc_final = 0
-    wbc_final = 0
-    pc_final = 0
-    hgb_final = 0
-    rcd_final = 0
-    mchc_final = 0
-    mpv_final = 0
-    pcv_final = 0
-    mcv_final = 0
+    context = {}    
+    # form = UploadForm()
+    request.session["confirm_id"] = 1
+    return render(request, 'HtmlFiles/FILE.html', {'name':name})
 
-   
-    if request.method == 'POST':
 
-        try:
-            for f in request.FILES.getlist('document'): 
-                print("-----------------------------------------------------------------------------")
-                uploaded_file = f
-                print(uploaded_file)
-                print("-----------------------------------------------------------------------------")
-            
-        except Exception as e:
-            messages.error(request,'No file is uploaded.')
-        else:
-            for f in request.FILES.getlist('document'): 
-                print("-----------------------------------------------------------------------------")
-                uploaded_file = f
-                print(uploaded_file)
-                print("-----------------------------------------------------------------------------")
-                namess=request.POST.get('reportname')
-                filepassword=request.POST.get('password')
-                print(filepassword)
-                fs = FileSystemStorage()
-                name = fs.save(uploaded_file.name, uploaded_file)
-                context['url'] = fs.url(name)
-                if(namess != ""):
-                    file_name = namess
-                else:
-                    file_name = uploaded_file.name
+def fileData(request):
+    # print(request.session["confirm_id"])
 
-                if(uploaded_file.name.endswith(".pdf")):
-                    try:
-                        rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
-                        print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
-                    except Exception as e:
-                        messages.error(request,'Password is wrong')
+    if "confirm_id" in request.session:
+    
+        context = {}
+        rbc_final = 0
+        wbc_final = 0
+        pc_final = 0
+        hgb_final = 0
+        rcd_final = 0
+        mchc_final = 0
+        mpv_final = 0
+        pcv_final = 0
+        mcv_final = 0
+        if request.method == 'POST':
+
+            try:
+                uploaded_file = request.FILES['document']
+                for f in request.FILES.getlist('document'): 
+                    print("-----------------------------------------------------------------------------")
+                    uploaded_file = f
+                    print(uploaded_file)
+                    print("-----------------------------------------------------------------------------")
+                
+            except Exception as e:
+                messages.error(request,'No file is uploaded.')
+                return redirect('FILE')
+            else:
+                for f in request.FILES.getlist('document'): 
+                    print("-----------------------------------------------------------------------------")
+                    uploaded_file = f
+                    print(uploaded_file)
+                    print("-----------------------------------------------------------------------------")
+                    namess=request.POST.get('reportname')
+                    filepassword=request.POST.get('password')
+                    print(filepassword)
+                    fs = FileSystemStorage()
+                    name = fs.save(uploaded_file.name, uploaded_file)
+                    context['url'] = fs.url(name)
+                    if(namess != ""):
+                        file_name = namess
                     else:
+                        file_name = uploaded_file.name
+
+                    if(uploaded_file.name.endswith(".pdf")):
+                        try:
+                            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
+                            print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
+                        except Exception as e:
+                            messages.error(request,'Password is wrong')
+                            return redirect('FILE')
+                        else:
+                            if(rbc_final == 0):
+                                rbc_final = rbc
+                            if(wbc_final == 0):
+                                wbc_final = wbc
+                            if(pc_final == 0):
+                                pc_final = pc
+                            if(hgb_final == 0):
+                                hgb_final = hgb
+                            if(rcd_final == 0):
+                                rcd_final = rcd
+                            if(mchc_final == 0):
+                                mchc_final = mchc
+                            if(mpv_final == 0):
+                                mpv_final = mpv
+                            if(pcv_final == 0):
+                                pcv_final = pcv
+                            if(mcv_final == 0):
+                                mcv_final = mcv
+                            
+                            initial = {'rbc': rbc_final,
+                                    'wbc': wbc_final,
+                                    'pc': pc_final,
+                                    'hgb': hgb_final,
+                                    'rcd': rcd_final,
+                                    'mchc': mchc_final,
+                                    'mpv': mpv_final,
+                                    'pcv': pcv_final,
+                                    'mcv': mcv_final,
+                                    'name':file_name,
+                                    'file':uploaded_file,
+                                    }
+
+                            request.session["file_name"] = uploaded_file.name
+                        
+                        
+                            form = ConfirmForm(initial=initial)
+                            # cbc.save()
+                            context = {
+                                'form': form,
+                                'file_name': file_name
+                            }
+                            
+                        
+                    elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                        rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
+                        user = request.user.get_username()
+
                         if(rbc_final == 0):
                             rbc_final = rbc
                         if(wbc_final == 0):
@@ -509,7 +578,7 @@ def FILE(request):
                             pcv_final = pcv
                         if(mcv_final == 0):
                             mcv_final = mcv
-                        
+                    
                         initial = {'rbc': rbc_final,
                                 'wbc': wbc_final,
                                 'pc': pc_final,
@@ -524,65 +593,22 @@ def FILE(request):
                                 }
 
                         request.session["file_name"] = uploaded_file.name
-                    
-                    
+                        print(request.session["file_name"])
                         form = ConfirmForm(initial=initial)
-                        # cbc.save()
                         context = {
-                            'form': form,
-                            'file_name': file_name
+                            'form': form
                         }
-                        
-                    
-                elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
-                    rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
-                    user = request.user.get_username()
-
-                    if(rbc_final == 0):
-                        rbc_final = rbc
-                    if(wbc_final == 0):
-                        wbc_final = wbc
-                    if(pc_final == 0):
-                        pc_final = pc
-                    if(hgb_final == 0):
-                        hgb_final = hgb
-                    if(rcd_final == 0):
-                        rcd_final = rcd
-                    if(mchc_final == 0):
-                        mchc_final = mchc
-                    if(mpv_final == 0):
-                        mpv_final = mpv
-                    if(pcv_final == 0):
-                        pcv_final = pcv
-                    if(mcv_final == 0):
-                        mcv_final = mcv
-                
-                    initial = {'rbc': rbc_final,
-                            'wbc': wbc_final,
-                            'pc': pc_final,
-                            'hgb': hgb_final,
-                            'rcd': rcd_final,
-                            'mchc': mchc_final,
-                            'mpv': mpv_final,
-                            'pcv': pcv_final,
-                            'mcv': mcv_final,
-                            'name':file_name,
-                            'file':uploaded_file,
-                            }
-
-                    request.session["file_name"] = uploaded_file.name
-                    print(request.session["file_name"])
-                    form = ConfirmForm(initial=initial)
-                    context = {
-                        'form': form
-                    }
-                else:
-                    messages.error(request,'Please upload .png, .jpg or .pdf file.')
+                    else:
+                        messages.error(request,'Please upload .png, .jpg or .pdf file.')
 
             return render(request, 'HtmlFiles/confirmForm.html', context)
-                
-    # form = UploadForm()
-    return render(request, 'HtmlFiles/FILE.html', {'name':name})
+    else:
+        print("yessss")
+        return redirect('viewmyreports')
+
+    return redirect('FILE')
+            
+
 
 
 def confirmForm(request):
@@ -597,19 +623,21 @@ def confirmForm(request):
                 obj.image = file_name
             elif(file_name.lower().endswith(('.pdf'))):
                 obj.file = file_name
-            
-
             obj.save()
+            del request.session['confirm_id']
 
     return redirect('viewmyreports')
+
+   
 
 # def addAnotherFile(request):
 
 #     report = Cbc.objects.last()
 
 
+
 def Doctorlogin(request):
-    if  (request.session['ConfirmDoctor_id']==True):
+    if  'ConfirmDoctor_id' in request.session:
         
          return redirect('viewPatients')
     else:
@@ -721,6 +749,7 @@ def logout_view(request):
 		logout(request)
 		messages.info(request, "You have successfully logged out.") 
 		return redirect("login")
+
 def getEditProfile(request):
     user=request.user.id or None
     instance = User.objects.get(id = user)

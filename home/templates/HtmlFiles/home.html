@@ -12,7 +12,7 @@
 		<nav class="navbar">
 			<div class="content">
 			  <div class="logo">
-			 <a href="{% url 'home' %}"><img src='{% static 'images/logo1.jpeg' %}' width="90"
+			 <a href="{% url 'home' %}"><img src='{% static 'users/images/logo1.jpeg' %}' width="90"
 					height="30"></a>
 			  </div>
 			  {% if user.is_authenticated %}
@@ -23,7 +23,7 @@
 				</div>
 				<li><a href="/home/">Home</a></li>
 				<li><a href="/viewmyreports/">My Reports</a></li>
-				<li><a  href="/FILE/">Upload</a></li>
+				<li><a  href="/allreports/">Upload</a></li>
 				<li style="color: #1C3144"><a  href="/userProfile/">{{name}}</li>
 				<li><a  href="/logout/">Logout</a></li>
 					
@@ -47,7 +47,7 @@
 			<div class="col">
 				<div class="card card1">
 					
-					<h5><a href="/FILE/" style='color:white'>Upload Reports</h5>
+					<h5><a href="/allreports/" style='color:white'>Upload Reports</h5>
 					<p>Start uploading your medical reports.</p>
 				</div>
 				<div class="card card2">
