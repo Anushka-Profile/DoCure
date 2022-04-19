@@ -58,5 +58,6 @@ path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('addComment/', views.addComment, name="addComment"),
   path('redocDashboard/', views.redocDashboard, name="redocDashboard"),
   path('deletePatient/<int:rid>', views.deleteReport, name="deleteReport"),
+  path('fileData/', views.fileData, name="fileData"),
 
 ]
