@@ -21,11 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-(_6d$#)cait*ckrv!gfwunqx(=5=lx^by&ahnjct8igxlio#in'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 import os
-ALLOWED_HOSTS = ["docure-ehr.herokuapp.com/","127.0.0.1:8000"]
+# SECURITY WARNING: don't run with debug turned on in production!
+if os.environ.get('ON_HEROKU', '0') == '0':
+    DEBUG = True
+else:
+    DEBUG = False
+import os
+ALLOWED_HOSTS = ["docure-ehr.herokuapp.com/","*"]
 
 
 # Application definition
