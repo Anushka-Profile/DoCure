@@ -11,10 +11,16 @@
 	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'>
 	<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-   <link rel="stylesheet" type="text/css" href="{% static 'users/css/register.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'users/css/profile.css' %}">
 
   
 
@@ -24,31 +30,49 @@
 
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-light  sticky-top" style="background-color: #	FF66FF">
-		<a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-		  height="60"></a>
-	
-	</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-		  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		  <span class="navbar-toggler-icon"></span>
-		</button>
-	
-		<div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
-		  <ul class="navbar-nav ml-auto">
+<div class="ok">
+	<nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
+
+        <a class="navbar-brand" href="/home/">
+        <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+        </a>
+  
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+
+            <li class="nav-item">
+                <a class="nav-link"style="color:black;" href="/home/">Home</a>
+            </li>
 			<li class="nav-item">
-			  <a class="nav-link" style="color: black" <a href="{% url 'homebefore' %}">Home <span
-				  class="sr-only">(current)</span></a>
-			</li>
-	
-			
-		  </ul>
-		</div>
-	  </nav>
-	
-	</div>
-	</div>
-	
+                <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a>
+            </li>
+			<li class="nav-item">
+                <a class="nav-link" style="color:black;"href="/FILE/">Upload</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a>
+            </li>
+			<li class="nav-item">
+      {% if user.is_authenticated %}
+      {% csrf_token %}
+      <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a>
+                {% endif %}
+            </li>
+			<li class="nav-item">
+                <a class="nav-link" style="color:black;"href="/logout/">Logout</a>
+            </li>
+            
+          </ul>
+        </div>
+      </nav>
+
+
+	<br>
 		<div class="student-profile py-4">
 			<div class="container">
 			  <div class="row">
@@ -111,7 +135,8 @@
 			  </div>
 			</div>
 		  </div>
-		  <h1>Your Doctors</h1>
+		  <br>
+		  <h1 style="text-align:center;">Your Doctors</h1>
 
 		{% for i in all_doctors %}
 
@@ -146,36 +171,7 @@
                     
                            {% endfor %}
 
-<style>
-	.student-profile .card {
-    	border-radius: 10px;
-	}		
-	.student-profile .card .card-header .profile_img {
-		width: 150px;
-		height: 150px;
-		object-fit: cover;
-		margin: 10px auto;
-		border: 10px solid #ccc;
-		border-radius: 50%;
-	}
-	.student-profile .card h3 {
-		font-size: 20px;
-		font-weight: 700;
-	}
-	.student-profile .card p {
-		font-size: 16px;
-		color: #000;
-	}
-	.student-profile .table th,
-	.student-profile .table td {
-		font-size: 14px;
-		padding: 5px 10px;
-		color: #000;
-	}
 
-
-
-</style>
 
 </body>
 

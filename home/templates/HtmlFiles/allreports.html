@@ -13,7 +13,9 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+	
+<div class="allreports">
+    <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
 
         <a class="navbar-brand" href="/home/">
         <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
@@ -54,19 +56,20 @@
       </nav>
 
 
-	<div class="allreports">
 		<div class="container">
             <font size='+2'><h5 style="color:black; margin-left:30%;">Please Select Report to be Uploaded</h5></font>
+			<br>
+			<br>
 		<div class="row" >
 
 		
-				<div class="card card1" style="margin-left:20%;">
+				<div class="card card1" style="margin-left:15%; background-color:red;">
 					
-					<h5><font size='+2'><a href="/FILE/" >CBC Reports</h5></font>
+					<h5><font size='+2'><a style="color:black;"href="/FILE/" >CBC Reports</h5></font>
 					
 				</div>
-				<div class="card card2">
-					<h5><font size='+2'><a href="//" >Urine Reports</h5></font>
+				<div class="card card2" style=" background-color:yellow;">
+					<h5><font size='+2'><a style="color:black;"href="//" >Urine Reports</h5></font>
 				</div>
 				<BR>
 					
@@ -81,7 +84,7 @@
 			</div>
 	
 	</div>
-</div>
+
 	<script>
 		// Wrap every letter in a span
 		var textWrapper = document.querySelector('.ml3');
@@ -103,5 +106,6 @@
 		});
 
 	</script>
+</div>
 </body>
 </html>

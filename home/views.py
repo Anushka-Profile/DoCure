@@ -350,12 +350,13 @@ def dashboard(request,rid):
 def docDashboard(request, rid):
     # print(user_id)
     # user = User.objects.get(id=user_id)
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
    
     all_reports= Cbc.objects.get(id=rid)
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
 
 def redocDashboard(request):
     rid=request.session['rid']
@@ -663,18 +664,20 @@ def Doctorlogin(request):
         return render(request, 'HtmlFiles/Doctorlogin.html')
         
 def doctorProfile(request):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     context={}
     print(request.session['ConfirmDoctor_id'])
     confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     all_docs= Doctor.objects.get(confirmdoctor = confirm_doc)  
-    return render(request,'HtmlFiles/doctorProfile.html',context={'all_docs':all_docs})
+    return render(request,'HtmlFiles/doctorProfile.html',context={'all_docs':all_docs,'name':name})
 
 def dgetEditProfile(request):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     instance = Doctor.objects.get(confirmdoctor = confirm_doc)
     form = EditProfileDoctor(instance=instance)
 
-    return render(request,'HtmlFiles/deditProfile.html',context={'form':form})
+    return render(request,'HtmlFiles/dEditProfile.html',context={'form':form,'name':name})
 
 def dEditProfile(request):   
     if request.method == "POST":
@@ -684,17 +687,18 @@ def dEditProfile(request):
         editform = EditProfileDoctor(request.POST, instance = instance)
         if editform.is_valid():
             editform.save()
-        return render('doctorProfile')	
+        return redirect('doctorProfile')	
 def Doctorlogout_view(request):
 		del request.session['ConfirmDoctor_id']
 		messages.info(request, "You have successfully logged out.") 
 		return redirect("Doctorlogin")
 
 def docViewReports(request, user_id):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     user = User.objects.get(id =user_id)
     request.session['user_id']=user_id
     all_reports= Cbc.objects.filter(user=user).order_by("-date") #.filter(user=request.user)
-    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports})
+    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports,'name':name})
 
 def reports(request):
     user=request.user or None

@@ -8,11 +8,10 @@
     height: 100vh;
     background-image: url('/static/images/Bg.jpg');
     background-size: 100% 100%;
-    padding-left: 8%;
-    padding-right: 8%;
+  
     background-size:cover ;
     overflow: auto;
-    padding-top: 8%;
+
     box-sizing: border-box;
 }
 /*  */
@@ -69,13 +68,13 @@ p{
     transition: transform 0.5s;
 }
 .card1{
-    background-color: red;
+    background-color:black;
 }
 .card2{
     background-color: yellow;
 }
 .card3{
-    background-image: url("/static/images/dashboard1.jpg");
+    background-image: pink;
 }
 .card4{
     background-image: url( '/static/images/background.jpg');

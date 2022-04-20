@@ -38,42 +38,47 @@
 
 
 <body>
-  <div class="navvss">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="ok">
+    <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
 
-    <a class="navbar-brand" href="/home/">
-    <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
-    </a>
+      <a class="navbar-brand" href="/home/">
+      <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+      </a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 
-      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 
-        <li class="nav-item">
-            <a class="nav-link" href="/home/">Home</a>
-        </li>
-  <li class="nav-item">
-            <a class="nav-link" href="/FILE/">Upload</a>
-        </li>
-        
-  <li class="nav-item">
-  {% if user.is_authenticated %}
-  {% csrf_token %}
-            <a class="nav-link" href="/userProfile/">{{name}}</a>
-            {% endif %}
-        </li>
-  <li class="nav-item">
-            <a class="nav-link" href="/logout/">Logout</a>
-        </li>
-        
-      </ul>
-    </div>
-  </nav>
-</div>
+          <li class="nav-item">
+              <a class="nav-link"style="color:black;" href="/home/">Home</a>
+          </li>
+    <li class="nav-item">
+              <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a>
+          </li>
+    <li class="nav-item">
+              <a class="nav-link" style="color:black;"href="/FILE/">Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a>
+          </li>
+    <li class="nav-item">
+    {% if user.is_authenticated %}
+    {% csrf_token %}
+    <font size="+1"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+              {% endif %}
+          </li>
+    <li class="nav-item">
+              <a class="nav-link" style="color:black;"href="/logout/">Logout</a>
+          </li>
+          
+        </ul>
+      </div>
+    </nav>
+
 
 
 
@@ -135,74 +140,7 @@
         });
       });
     </script> -->
-    <style>
-      .passwords{
-        width:50% !important;
-      }
-      .filename{
-        width:50% !important;
-      }
-        body{
-          background-image: url("{% static 'images/BG.jpg' %}");
-           background-size: cover;
-           overflow: auto;
-        }
-    
-    .navvss{
-       color:transperant;
-    }
-     
-        form{
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          margin-top: -100px;
-          margin-left: -250px;
-          width: 500px;
-          height: 200px;
-         
-          
-        }
-        form p{
-          width: 100%;
-          height: 10%;
-          text-align: center;
-          position:absolute;
-          margin-top:-100px;
-          color: black;
-          font-family: Arial;
-        }
-        form div{
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: 100%;
-          outline: none;
-        
-          border: 4px dashed black;
-        }
-        .upload{
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: 100%;
-          outline: none;
-          opacity:0;
-          border: 4px dashed black;
-        }
-        
-        /* additions */
-        .btn-inline {
-          height: 50px;
-          border-radius: 0 4px 4px 0;
-          margin-left: 0;
-        }
-        .buttons{
-          font-size:20px;
-          margin-left:190px;
-        }
-        
-        
-      </style>    
+  </div>
+</div>
   </body>
   </html>
