@@ -12,7 +12,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap CSS -->	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">      
+    <link rel="stylesheet" type="text/css" href="{% static 'users/css/file.css' %}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 
@@ -31,32 +37,43 @@
    
 
 
-<nav class="navbar navbar-expand-lg navbar-light  sticky-top" style="background-color ">
-  <a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="150"
-    height="60"></a>
-</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<body>
+  <div class="navvss">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
 
-  <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link" tyle="margin-top:10px" C <a href="{% url 'home' %}">Home <span
-            class="sr-only">(current)</span></a>
-      </li>
-      &nbsp&nbsp
-      {% if user.is_authenticated %}
-      <li class="nav-item">
-        <li style="margin-top:10px" C>{{name}}</li>
-      				
-      {% endif %}
+    <a class="navbar-brand" href="/home/">
+    <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+    </a>
 
-    </ul>
-  </div>
-</nav>
- 
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+
+      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+
+        <li class="nav-item">
+            <a class="nav-link" href="/home/">Home</a>
+        </li>
+  <li class="nav-item">
+            <a class="nav-link" href="/FILE/">Upload</a>
+        </li>
+        
+  <li class="nav-item">
+  {% if user.is_authenticated %}
+  {% csrf_token %}
+            <a class="nav-link" href="/userProfile/">{{name}}</a>
+            {% endif %}
+        </li>
+  <li class="nav-item">
+            <a class="nav-link" href="/logout/">Logout</a>
+        </li>
+        
+      </ul>
+    </div>
+  </nav>
+</div>
 
 
 
@@ -66,7 +83,8 @@
 
 
 
-  <form action="/fileData/" method="post"  enctype="multipart/form-data">
+<form action="/fileData/" method="post"  enctype="multipart/form-data">
+
     {% csrf_token %}              
 
     <label><font size="+2">Name:</label></font>
@@ -106,8 +124,18 @@
     
     
           </div>
-    <style>
    
+      
+      
+
+    <!-- <script>
+      $(document).ready(function(){
+        $('upload').change(function () {
+          $('form p').text(this.files.length + " file(s) selected");
+        });
+      });
+    </script> -->
+    <style>
       .passwords{
         width:50% !important;
       }
@@ -117,9 +145,12 @@
         body{
           background-image: url("{% static 'images/BG.jpg' %}");
            background-size: cover;
+           overflow: auto;
         }
     
-    
+    .navvss{
+       color:transperant;
+    }
      
         form{
           position: absolute;
@@ -172,16 +203,6 @@
         }
         
         
-        
-      </style>
-      
-      
-      
-
-    <!-- <script>
-      $(document).ready(function(){
-        $('upload').change(function () {
-          $('form p').text(this.files.length + " file(s) selected");
-        });
-      });
-    </script> -->
+      </style>    
+  </body>
+  </html>

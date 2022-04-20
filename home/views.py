@@ -62,8 +62,18 @@ def home(request):
     #         return redirect('home')
     # else:
     return render(request,'HtmlFiles/home.html',{'name':name})
+def allreports(request):
+    name=request.user.username or None
+    # if request.user.is_authenticated:
+    #         return redirect('home')
+    # else:
+    return render(request,'HtmlFiles/allreports.html',{'name':name})
 
 def homebefore(request):
+    if  'ConfirmDoctor_id' in request.session:
+        
+         return redirect('viewPatients')
+    
     if request.user.is_authenticated:
         return redirect('home')
     else:
@@ -103,10 +113,10 @@ def viewDoctor(request):
     
     return render(request,'HtmlFiles/viewDoctor.html',context={'name':name,'d1':d1})
 def Doctorregister(request):
-    # if  (request.session['ConfirmDoctor_id']==True):
+    if  'ConfirmDoctor_id' in request.session:
         
-    #     return redirect('viewPatients')
-    # else:
+         return redirect('viewPatients')
+    else:
         if request.method == "POST":
             form = DoctorForm(request.POST)
             if form.is_valid():
@@ -618,13 +628,16 @@ def confirmForm(request):
 
     return redirect('viewmyreports')
 
+   
+
 # def addAnotherFile(request):
 
 #     report = Cbc.objects.last()
 
 
+
 def Doctorlogin(request):
-    if  (request.session['ConfirmDoctor_id']==True):
+    if  'ConfirmDoctor_id' in request.session:
         
          return redirect('viewPatients')
     else:
@@ -738,6 +751,7 @@ def logout_view(request):
 		logout(request)
 		messages.info(request, "You have successfully logged out.") 
 		return redirect("login")
+
 def getEditProfile(request):
     user=request.user.id or None
     instance = User.objects.get(id = user)
