@@ -454,11 +454,11 @@ def GetInfoOCR(path):
 
 
 
-def FILE(request):
+def upload(request):
     name=request.user.username or None
     context = {}    
     request.session["confirm_id"] = 1
-    return render(request, 'HtmlFiles/FILE.html',context= {'name':name})
+    return render(request, 'HtmlFiles/upload.html',context= {'name':name})
 
 
 def fileData(request):
@@ -488,7 +488,7 @@ def fileData(request):
                 
             except Exception as e:
                 messages.error(request,'No file is uploaded.')
-                return redirect('FILE')
+                return redirect('upload')
             else:
                 for f in request.FILES.getlist('document'): 
                     print("-----------------------------------------------------------------------------")
@@ -512,7 +512,7 @@ def fileData(request):
                             print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
-                            return redirect('FILE')
+                            return redirect('upload')
                         else:
                             if(rbc_final == 0):
                                 rbc_final = rbc
@@ -607,7 +607,7 @@ def fileData(request):
         print("yessss")
         return redirect('viewmyreports')
 
-    return redirect('FILE')
+    return redirect('upload')
             
 
 
