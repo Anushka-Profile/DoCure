@@ -55,6 +55,7 @@ from django.core.files.storage import default_storage
 # Create your views here.
 from .models import *
 
+
 def home(request):
     name=request.user.username or None
     # if request.user.is_authenticated:
@@ -632,9 +633,12 @@ def confirmForm(request):
    
 
 # def addAnotherFile(request):
+# from admin import download_csv
+# #     report = Cbc.objects.last()
+# def getCsv(request):
+#     data = download_csv(ModelAdmin, request, Cbc.objects.all())
 
-#     report = Cbc.objects.last()
-
+#     return HttpResponse (data, content_type='text/csv')
 
 
 def Doctorlogin(request):
