@@ -650,16 +650,19 @@ def Doctorlogin(request):
 
 
 
-                user = ConfirmDoctor.objects.filter(username=username,password=password).values()[0]
+                # user = ConfirmDoctor.objects.filter(username=username,password=password).exists()
                 # request.session['ConfirmDoctoR']='9555'
-                if user is not None:
+                if (ConfirmDoctor.objects.filter(username=username,password=password).exists()):
                         # login(request, user)
-                        request.session['ConfirmDoctor_id']=user['id']
+                        user = ConfirmDoctor.objects.get(username=username,password=password)
+                        request.session['ConfirmDoctor_id']=user.id
                         # request.session['ConfirmDoctoR']='123'
                         return redirect('viewPatients')
                 else:
                         messages.error(request,'username or password not correct')
-	
+                        return render(request, 'HtmlFiles/Doctorlogin.html')
+
+    
                         
         
         return render(request, 'HtmlFiles/Doctorlogin.html')
