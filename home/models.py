@@ -1,4 +1,4 @@
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from distutils.command.upload import upload
 import email
 from enum import unique
@@ -53,24 +53,24 @@ class ViewDoctor(models.Model):
 
 class Cbc(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rbc = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    wbc = models.FloatField(blank=True,default=NULL,null=True,max_length=150)
-    pc = models.FloatField(null=True,blank=True,default=NULL,max_length=25)
-    hgb = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    rcd= models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    mchc = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    mpv = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    pcv = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
-    mcv = models.FloatField(null=True,blank=True,default=NULL,max_length=150)
+    rbc = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    wbc = models.FloatField(blank=True,default=None,null=True,max_length=150)
+    pc = models.FloatField(null=True,blank=True,default=None,max_length=25)
+    hgb = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    rcd= models.FloatField(null=True,blank=True,default=None,max_length=150)
+    mchc = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    mpv = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    pcv = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    mcv = models.FloatField(null=True,blank=True,default=None,max_length=150)
     name= models.CharField(max_length=150,null=True,blank=False)
     password=models.CharField(max_length=150,null=True,blank=True)
     date = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default=NULL, null=True)
-    file = models.FileField(default=NULL, null=True)
+    image = models.ImageField(default=None, null=True)
+    file = models.FileField(default=None, null=True)
 
 class tempFileStorage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    file = models.FileField(default=NULL, null=True)
+    file = models.FileField(default=None, null=True)
 
 
 class  Comments(models.Model):
