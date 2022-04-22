@@ -20,7 +20,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth import authenticate, login, logout
 from matplotlib.pyplot import rcdefaults, text
 from numpy import delete
-# from platformdirs import Path
+from platformdirs import Path
 from DoCure.settings import EMAIL_HOST_USER
 
 from django.contrib.auth.forms import AuthenticationForm
@@ -481,20 +481,18 @@ def fileData(request):
             try:
                 uploaded_file = request.FILES['document']
                 for f in request.FILES.getlist('document'): 
-                    print("-----------------------------------------------------------------------------")
+                   
                     uploaded_file = f
-                    print(uploaded_file)
-                    print("-----------------------------------------------------------------------------")
-                
+                    
             except Exception as e:
                 messages.error(request,'No file is uploaded.')
                 return redirect('upload')
             else:
                 for f in request.FILES.getlist('document'): 
-                    print("-----------------------------------------------------------------------------")
+                  
                     uploaded_file = f
                     print(uploaded_file)
-                    print("-----------------------------------------------------------------------------")
+                  
                     namess=request.POST.get('reportname')
                     filepassword=request.POST.get('password')
                     print(filepassword)

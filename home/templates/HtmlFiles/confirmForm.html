@@ -56,12 +56,12 @@
   </nav>
   <font size="+3"><h6 style="text-align:center;">Please Confirm Your Values</h6></font>
   <div class="dd">
-    <form id="myForm" action="/viewmyreports/" method="post">
+    <form  action="/confirmForm/" method="post">
   <div class="scroll">
         {% csrf_token %}
         {{form|crispy}}
         
-        <input type="submit" onclick="validate()"  value="Confirm">
+        <input type="submit"  value="Confirm">
  
     </form>
   </div>
