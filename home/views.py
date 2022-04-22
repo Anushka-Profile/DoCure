@@ -457,9 +457,8 @@ def GetInfoOCR(path):
 def FILE(request):
     name=request.user.username or None
     context = {}    
-    # form = UploadForm()
     request.session["confirm_id"] = 1
-    return render(request, 'HtmlFiles/FILE.html', {'name':name})
+    return render(request, 'HtmlFiles/FILE.html',context= {'name':name})
 
 
 def fileData(request):
