@@ -1,7 +1,7 @@
 from multiprocessing import context
 from site import USER_BASE
-from tkinter.font import names
-from tkinter.tix import Form
+# from tkinter.font import names
+# from tkinter.tix import Form
 from urllib import request
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
