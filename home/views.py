@@ -463,7 +463,7 @@ def FILE(request):
 
 def fileData(request):
     # print(request.session["confirm_id"])
-
+    print("YOOOOO")
     if "confirm_id" in request.session:
     
         context = {}
@@ -553,7 +553,8 @@ def fileData(request):
                             # cbc.save()
                             context = {
                                 'form': form,
-                                'file_name': file_name
+                                'file_name': file_name,
+                                # 'confirm_id': request.session["confirm_id"]
                             }
                             
                         
@@ -607,10 +608,10 @@ def fileData(request):
         print("yessss")
         return redirect('viewmyreports')
 
-    return redirect('FILE')
+    # return redirect('FILE')
             
 
-
+from cryptography.fernet import Fernet
 def confirmForm(request):
     if request.method == 'POST':
         form = ConfirmForm(request.POST)
@@ -623,6 +624,15 @@ def confirmForm(request):
                 obj.image = file_name
             elif(file_name.lower().endswith(('.pdf'))):
                 obj.file = file_name
+            rbc = form.cleaned_data.get('rbc')
+            print(rbc)
+            # key = Fernet.generate_key()
+            # f = Fernet(key)
+            # stringBytes = bytes(str(rbc),'UTF-8')
+            # token = f.encrypt(stringBytes)
+            # print(token)
+
+
             obj.save()
             del request.session['confirm_id']
 
@@ -648,15 +658,18 @@ def Doctorlogin(request):
 
 
 
-                user = ConfirmDoctor.objects.filter(username=username,password=password).values()[0]
+                # user = ConfirmDoctor.objects.filter(username=username,password=password).exists()
                 # request.session['ConfirmDoctoR']='9555'
-                if user is not None:
+                if (ConfirmDoctor.objects.filter(username=username,password=password).exists()):
                         # login(request, user)
-                        request.session['ConfirmDoctor_id']=user['id']
+                        user = ConfirmDoctor.objects.get(username=username,password=password)
+                        request.session['ConfirmDoctor_id']=user.id
                         # request.session['ConfirmDoctoR']='123'
                         return redirect('viewPatients')
                 else:
                         messages.error(request,'username or password not correct')
+                        return render(request, 'HtmlFiles/Doctorlogin.html')
+
 	
                         
         
