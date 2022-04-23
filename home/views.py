@@ -445,7 +445,7 @@ def docRequest(request, doc_id):
 
 def GetInfoOCR(path):
     cbc = path
-    pytesseract.pytesseract.tesseract_cmd = '/DoCure/.apt/usr/bin/tesseract' #enter your path here
+    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract' #enter your path here
     text = pytesseract.image_to_string(Image.open(cbc))
 
     print(text)
