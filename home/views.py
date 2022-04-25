@@ -27,7 +27,7 @@ from DoCure.settings import EMAIL_HOST_USER
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 
-from .forms  import  NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor, UploadForm
+from .forms  import  NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor, UploadForm, ConfirmUrineForm
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
@@ -49,7 +49,8 @@ from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
 
 from django.core.files.storage import default_storage
-
+from itertools import chain
+ 
 
 
 
@@ -366,7 +367,6 @@ def GetInfoOCR(path):
     pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract' #enter your path here
     text = pytesseract.image_to_string(Image.open(cbc))
 
-    print(text)
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
 
@@ -810,7 +810,12 @@ def reports(request):
     user=request.user or None
     name=request.user.username or None
     all_reports= Cbc.objects.filter(user=user).order_by('-date')  #.filter(user=request.user)
-    p = Paginator(all_reports, 10)
+    all_Urine_reports= Urine.objects.filter(user=user).order_by('-date') 
+    result_list = sorted(
+        chain(all_reports, all_Urine_reports),
+        key=lambda data: data.date, reverse=True)
+    print(result_list)
+    p = Paginator(result_list, 10)
     page_number = request.GET.get('page')
     try:
         page_obj = p.get_page(page_number)  # returns the desired page object
@@ -820,7 +825,9 @@ def reports(request):
     except EmptyPage:
         # if page is empty then return last page
         page_obj = p.page(p.num_pages)
-    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name, 'page_obj':page_obj})
+    for i in page_obj.object_list:
+        i.type = i.__class__.__name__
+    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':result_list,'name':name, 'page_obj':page_obj})
 
 def deleteReport(request, rid):
 
@@ -948,29 +955,42 @@ def fileStorage(request):
                 obj.save()
                 return redirect('viewmyreports')
 
+
+
+def getPDFText(file, password):
+    with pdfplumber.open(file, password=password) as pdf:
+        page = pdf.pages[0]
+        text = page.extract_text()
+    return text
+
+def getImageText(uploaded_file):
+    cbc = uploaded_file
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #enter your path here
+    text = pytesseract.image_to_string(Image.open(cbc))
+
+    return text
                         
 def UrineFile(request):
     name=request.user.username or None
     context = {}    
     # form = UploadForm()
     request.session["confirm_id"] = 1
-    return render(request, 'HtmlFiles/BiochemFile.html', {'name':name})
+    return render(request, 'HtmlFiles/UrineFile.html', {'name':name})
 
+def extractUrine(text):
+    glucose_re = re.compile(r'(.*[gG]lucose\W*)(\w+)')
+    glucose = glucose_re.search(text)
+    if (glucose != None):
+        glu = glucose[2]
+    return glu
 
 
 def UrineFileData(request):
     if "confirm_id" in request.session:
     
         context = {}
-        rbc_final = 0
-        wbc_final = 0
-        pc_final = 0
-        hgb_final = 0
-        rcd_final = 0
-        mchc_final = 0
-        mpv_final = 0
-        pcv_final = 0
-        mcv_final = 0
+        
+        glu = ''
         if request.method == 'POST':
 
             try:
@@ -1003,40 +1023,19 @@ def UrineFileData(request):
 
                     if(uploaded_file.name.endswith(".pdf")):
                         try:
-                            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
-                            print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
+                            text = getPDFText(uploaded_file,filepassword)
+                            print(text)
+                            glu = extractUrine(text)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
                             return redirect('UrineFile')
                         else:
-                            if(rbc_final == 0):
-                                rbc_final = rbc
-                            if(wbc_final == 0):
-                                wbc_final = wbc
-                            if(pc_final == 0):
-                                pc_final = pc
-                            if(hgb_final == 0):
-                                hgb_final = hgb
-                            if(rcd_final == 0):
-                                rcd_final = rcd
-                            if(mchc_final == 0):
-                                mchc_final = mchc
-                            if(mpv_final == 0):
-                                mpv_final = mpv
-                            if(pcv_final == 0):
-                                pcv_final = pcv
-                            if(mcv_final == 0):
-                                mcv_final = mcv
+                         
+                            if(glu == ''):
+                                glu = glu
                             
-                            initial = {'rbc': rbc_final,
-                                    'wbc': wbc_final,
-                                    'pc': pc_final,
-                                    'hgb': hgb_final,
-                                    'rcd': rcd_final,
-                                    'mchc': mchc_final,
-                                    'mpv': mpv_final,
-                                    'pcv': pcv_final,
-                                    'mcv': mcv_final,
+                            initial = {
+                                    'glucose': glu,
                                     'name':file_name,
                                     'file':uploaded_file,
                                     }
@@ -1044,7 +1043,7 @@ def UrineFileData(request):
                             request.session["urine_file_name"] = uploaded_file.name
                         
                         
-                            form = ConfirmForm(initial=initial)
+                            form = ConfirmUrineForm(initial=initial)
                             # cbc.save()
                             context = {
                                 'form': form,
@@ -1054,61 +1053,58 @@ def UrineFileData(request):
                             
                         
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
-                        rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
+                        text = getImageText(uploaded_file)
+                        print(text)
+                        glu = extractUrine(text)
                         user = request.user.get_username()
-
-                        if(rbc_final == 0):
-                            rbc_final = rbc
-                        if(wbc_final == 0):
-                            wbc_final = wbc
-                        if(pc_final == 0):
-                            pc_final = pc
-                        if(hgb_final == 0):
-                            hgb_final = hgb
-                        if(rcd_final == 0):
-                            rcd_final = rcd
-                        if(mchc_final == 0):
-                            mchc_final = mchc
-                        if(mpv_final == 0):
-                            mpv_final = mpv
-                        if(pcv_final == 0):
-                            pcv_final = pcv
-                        if(mcv_final == 0):
-                            mcv_final = mcv
-                    
-                        initial = {'rbc': rbc_final,
-                                'wbc': wbc_final,
-                                'pc': pc_final,
-                                'hgb': hgb_final,
-                                'rcd': rcd_final,
-                                'mchc': mchc_final,
-                                'mpv': mpv_final,
-                                'pcv': pcv_final,
-                                'mcv': mcv_final,
+                        if(glu == ''):
+                            glu = glu
+                        
+                        initial = {
+                                'glucose': glu,
                                 'name':file_name,
                                 'file':uploaded_file,
                                 }
 
-                        request.session["biochem_file_name"] = uploaded_file.name
-                        print(request.session["biochem_file_name"])
-                        form = ConfirmForm(initial=initial)
+                        request.session["urine_file_name"] = uploaded_file.name
+                    
+                    
+                        form = ConfirmUrineForm(initial=initial)
+                     
                         context = {
-                            'form': form
+                            'form': form,
+                            'file_name': file_name,
+                            # 'confirm_id': request.session["confirm_id"]
                         }
                     else:
                         messages.error(request,'Please upload .png, .jpg or .pdf file.')
 
-            return render(request, 'HtmlFiles/confirmBiochemForm.html', context)
+            return render(request, 'HtmlFiles/confirmUrineForm.html', context)
     else:
         print("yessss")
         return redirect('viewmyreports')
 
 def confirmUrineForm(request):
     if request.method == 'POST':
-        form = ConfirmForm(request.POST)
+        form = ConfirmUrineForm(request.POST)
         if form.is_valid():  
             obj = form.save(commit=False)
+            file_name = request.session["urine_file_name"]
+            if(file_name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                obj.image = file_name
+            elif(file_name.lower().endswith(('.pdf'))):
+                obj.file = file_name
             obj.user = request.user
             obj.save()
             print('e')
+    return redirect('viewmyreports')
+
+def deleteUrineReport(request, rid):
+
+    report = Urine.objects.get(id=rid)
+    print(report.name)
+    report.delete()
+
+    user=request.user or None
+    name=request.user.username or None
     return redirect('viewmyreports')

@@ -5,7 +5,7 @@ from django.contrib import admin
 from .models import User
 from .models import Cbc
 from  .models import Comments
-from .models import Doctor,ViewDoctor,ConfirmDoctor, FileStore
+from .models import Doctor,ViewDoctor,ConfirmDoctor, FileStore,Urine
 
 #Register your models here.
 admin.site.register(User)
@@ -15,3 +15,4 @@ admin.site.register(ViewDoctor)
 admin.site.register(ConfirmDoctor)
 admin.site.register(Comments)
 admin.site.register(FileStore)
+admin.site.register(Urine)

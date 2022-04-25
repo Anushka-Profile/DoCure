@@ -74,6 +74,7 @@
         <tr>
             <th>Time of Report</th>
             <th>Filename</th>
+            <th>Report Type</th>
             <th>View Dashboard</th>
             <th>Delete Report</th>
           </tr>
@@ -81,6 +82,9 @@
         <tr>
              <td>{{i.date}}</td>
              <td>{{i.name}}</td>
+             <td>{{i.type}}</td>
+             
+             {% if i.type == 'Cbc' %}
              <td><div style="text-align: center;">
                 <a href="{% url 'dashboard' i.id%}"class="accept" name="{{i}}"
                     data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div></td>
@@ -88,6 +92,16 @@
                 <a href="{% url 'deleteReport' i.id %}"class="deny" name="remove"
                 data-target="#loginModal1" value="reject">Delete Report<span class="fa fa-check"></span></a>  
             </td>
+            {% elif i.type == 'Urine' %}
+            <td><div style="text-align: center;">
+                TBD
+            </td>
+            <td>
+                <a href="{% url 'deleteUrineReport' i.id %}"class="deny" name="remove"
+                data-target="#loginModal1" value="reject">Delete Report<span class="fa fa-check"></span></a>  
+            </td>
+
+            {% endif %}
 
                     
         </tr>

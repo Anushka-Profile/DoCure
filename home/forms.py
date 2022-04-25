@@ -1,7 +1,7 @@
 from datetime import date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User,Cbc,ConfirmDoctor
+from .models import User,Cbc,ConfirmDoctor, Urine
 from .models import Comments
 from django.contrib.auth.hashers import make_password
 
@@ -127,3 +127,9 @@ class EditProfile(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username","first_name",'last_name', "email", "height","weight","gender")
+
+class ConfirmUrineForm(forms.ModelForm):
+    
+    class Meta:
+        model = Urine
+        fields = ("name","glucose")
