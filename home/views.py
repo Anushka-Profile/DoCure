@@ -62,6 +62,7 @@ def home(request):
     # if request.user.is_authenticated:
     #         return redirect('home')
     # else:
+    # messages.clear()
     return render(request,'HtmlFiles/home.html',{'name':name})
 def allreports(request):
     name=request.user.username or None
