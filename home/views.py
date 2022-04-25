@@ -300,89 +300,6 @@ def GetInfo(path,filepassword):
    
 
 
-def dashboard(request,rid):
-    context={}
-    name=request.user.username or None
-  
-    all_reports= Cbc.objects.get(user=request.user, id=rid)
-    all_comments = Comments.objects.filter(user=request.user, report=all_reports)
-
-    if(all_reports.wbc>=1 and all_reports.wbc<100):
-        all_reports.wbc *= 1000
-    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
-        all_reports.wbc *= 10
-    
-
-    if(all_reports.rbc>=100 and all_reports.rbc<1000):
-        all_reports.rbc /= 100
-    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
-        all_reports.rbc /= 1000
-
-       
-  
-    if(all_reports.hgb>=100 and all_reports.hgb<1000):
-        all_reports.hgb /= 10
-    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
-        all_reports.hgb /= 100
-       
-       
-       
-    
-    if(all_reports.pc>=1 and all_reports.pc<10):
-        all_reports.pc *= 1000000
-    elif(all_reports.pc>=10 and all_reports.pc<100):
-        all_reports.pc *= 100000
-    elif(all_reports.pc>=100 and all_reports.pc<1000):
-        all_reports.pc *= 10000
-    elif(all_reports.pc>=1000 and all_reports.pc<10000):
-        all_reports.pc *= 1000
-    elif(all_reports.pc>=10000 and all_reports.pc<100000):
-        all_reports.pc *= 100
-    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
-  
-
-
-    print(all_reports.file.path)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
-
-
-
-def docDashboard(request, rid):
-    # print(user_id)
-    # user = User.objects.get(id=user_id)
-    form = CommentForm()
-    request.session['rid']=rid
-   
-    all_reports= Cbc.objects.get(id=rid)
-
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
-
-def redocDashboard(request):
-    rid=request.session['rid']
-    form = CommentForm()
-
-    all_reports= Cbc.objects.get(id=rid)
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
-
-
-
-
-def addComment(request):
-    doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():  
-            obj = form.save(commit=False)
-            obj.doctor = doc
-            user=User.objects.get(id=request.session['user_id'])
-            obj.user = user
-            print(user)
-            report=Cbc.objects.get(id=request.session['rid'])
-            obj.report=report
-            obj.save()
-            print('e')
-    return redirect('redocDashboard')
 
 
 def ViewPatients(request):
@@ -610,35 +527,208 @@ def fileData(request):
 
     # return redirect('FILE')
             
+import environ
+env = environ.Env()
+environ.Env.read_env()
+
+key: bytes = bytes(env('KEY'),'ascii')
+# print(key)
+# print(type(key))
 
 from cryptography.fernet import Fernet
+# key = b'nMkhkaca8wdcK9NDPKmNCFOggEp0OwfPOqLl3BhpyHI='
+f = Fernet(key)
 def confirmForm(request):
     if request.method == 'POST':
         form = ConfirmForm(request.POST)
         if form.is_valid():  
+            s = Cbc()
             obj = form.save(commit=False)
-            obj.user = request.user
+            s.user = request.user
             file_name = request.session["file_name"]
             # f = default_storage.open(file_name, 'r')
             if(file_name.lower().endswith(('.png', '.jpg', '.jpeg'))):
-                obj.image = file_name
+                s.image = file_name
             elif(file_name.lower().endswith(('.pdf'))):
-                obj.file = file_name
+                s.file = file_name
+            s.name = form.cleaned_data.get('name')
+
             rbc = form.cleaned_data.get('rbc')
-            print(rbc)
-            # key = Fernet.generate_key()
-            # f = Fernet(key)
-            # stringBytes = bytes(str(rbc),'UTF-8')
-            # token = f.encrypt(stringBytes)
-            # print(token)
+            if(rbc != None):
+                
+                stringBytes = bytes(str(rbc),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.rbc_enc = token
 
+            wbc = form.cleaned_data.get('wbc')
+            if(wbc != None):
+              
+                stringBytes = bytes(str(wbc),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.wbc_enc = token
 
-            obj.save()
+            pc = form.cleaned_data.get('pc')
+            if(pc != None):
+              
+                stringBytes = bytes(str(pc),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.pc_enc = token
+
+            hgb = form.cleaned_data.get('hgb')
+            if(hgb != None):
+               
+                stringBytes = bytes(str(hgb),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.hgb_enc = token
+
+            rcd = form.cleaned_data.get('rcd')
+            if(rcd != None):
+               
+                stringBytes = bytes(str(rcd),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.rcd_enc = token
+
+            mchc = form.cleaned_data.get('mchc')
+            if(mchc != None):
+               
+                stringBytes = bytes(str(mchc),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.mchc_enc = token
+
+            mpv = form.cleaned_data.get('mpv')
+            if(mpv != None):
+               
+                stringBytes = bytes(str(mpv),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.mpv_enc = token
+
+            pcv = form.cleaned_data.get('pcv')
+            if(pcv != None):
+               
+                stringBytes = bytes(str(pcv),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.pcv_enc = token
+
+            mcv = form.cleaned_data.get('mcv')
+            if(mcv != None):
+              
+                stringBytes = bytes(str(mcv),'UTF-8')
+                token = f.encrypt(stringBytes)
+                s.mcv_enc = token
+            
+            s.save()
+            # obj.rbc_enc = token
+            # obj.save()
             del request.session['confirm_id']
 
     return redirect('viewmyreports')
 
    
+
+
+def dashboard(request,rid):
+    context={}
+    name=request.user.username or None
+  
+    all_reports= Cbc.objects.get(user=request.user, id=rid)
+    all_comments = Comments.objects.filter(user=request.user, report=all_reports)
+    print(all_reports.wbc_enc)
+    wbc = float(f.decrypt(all_reports.wbc_enc))
+    print(wbc)
+
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+    
+
+
+
+    print(all_reports.file.path)
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
+
+
+
+def docDashboard(request, rid):
+    # print(user_id)
+    # user = User.objects.get(id=user_id)
+    form = CommentForm()
+    request.session['rid']=rid
+   
+    all_reports= Cbc.objects.get(id=rid)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+
+def redocDashboard(request):
+    rid=request.session['rid']
+    form = CommentForm()
+
+    all_reports= Cbc.objects.get(id=rid)
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+
+
+
+
+def addComment(request):
+    doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():  
+            obj = form.save(commit=False)
+            obj.doctor = doc
+            user=User.objects.get(id=request.session['user_id'])
+            obj.user = user
+            print(user)
+            report=Cbc.objects.get(id=request.session['rid'])
+            obj.report=report
+            obj.save()
+            print('e')
+    return redirect('redocDashboard')
 
 # def addAnotherFile(request):
 
@@ -736,7 +826,7 @@ def deleteReport(request, rid):
     user=request.user or None
     name=request.user.username or None
     all_reports= Cbc.objects.filter(user=user).order_by('-date')  #.filter(user=request.user)
-    return render(request,'HtmlFiles/viewmyreports.html',context={'posts':all_reports,'name':name})
+    return redirect('viewmyreports')
 
 
 
@@ -820,3 +910,200 @@ def password_reset_request(request):
                                                 return redirect ("/password_reset/done/")
                                 password_reset_form = PasswordResetForm()
                                 return render(request=request, template_name="HtmlFiles/password_reset.html", context={"password_reset_form":password_reset_form})
+
+
+def fileUpload(request):
+    name=request.user.username or None
+    context = {}    
+    # form = UploadForm()
+    return render(request, 'HtmlFiles/FileUpload.html', {'name':name})
+
+def fileStorage(request):
+    if request.method == 'POST':
+            try:
+                uploaded_file = request.FILES['document']   
+            except Exception as e:
+                messages.error(request,'No file is uploaded.')
+                return redirect('fileUpload')
+            else:
+                namess=request.POST.get('reportname')
+                # filepassword=request.POST.get('password')
+                # print(filepassword)
+                fs = FileSystemStorage()
+                name = fs.save(uploaded_file.name, uploaded_file)
+                if(namess != ""):
+                    file_name = namess
+                else:
+                    file_name = uploaded_file.name
+                obj = FileStore(user=request.user)
+                if(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))): 
+                    obj.image = uploaded_file
+                else:
+                    obj.file = uploaded_file
+                obj.save()
+                return redirect('viewmyreports')
+
+                        
+def UrineFile(request):
+    name=request.user.username or None
+    context = {}    
+    # form = UploadForm()
+    request.session["confirm_id"] = 1
+    return render(request, 'HtmlFiles/BiochemFile.html', {'name':name})
+
+
+
+def UrineFileData(request):
+    if "confirm_id" in request.session:
+    
+        context = {}
+        rbc_final = 0
+        wbc_final = 0
+        pc_final = 0
+        hgb_final = 0
+        rcd_final = 0
+        mchc_final = 0
+        mpv_final = 0
+        pcv_final = 0
+        mcv_final = 0
+        if request.method == 'POST':
+
+            try:
+                uploaded_file = request.FILES['document']
+                for f in request.FILES.getlist('document'): 
+                    print("-----------------------------------------------------------------------------")
+                    uploaded_file = f
+                    print(uploaded_file)
+                    print("-----------------------------------------------------------------------------")
+                
+            except Exception as e:
+                messages.error(request,'No file is uploaded.')
+                return redirect('UrineFile')
+            else:
+                for f in request.FILES.getlist('document'): 
+                    print("-----------------------------------------------------------------------------")
+                    uploaded_file = f
+                    print(uploaded_file)
+                    print("-----------------------------------------------------------------------------")
+                    namess=request.POST.get('reportname')
+                    filepassword=request.POST.get('password')
+                    print(filepassword)
+                    fs = FileSystemStorage()
+                    name = fs.save(uploaded_file.name, uploaded_file)
+                    context['url'] = fs.url(name)
+                    if(namess != ""):
+                        file_name = namess
+                    else:
+                        file_name = uploaded_file.name
+
+                    if(uploaded_file.name.endswith(".pdf")):
+                        try:
+                            rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfo(uploaded_file,filepassword)
+                            print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
+                        except Exception as e:
+                            messages.error(request,'Password is wrong')
+                            return redirect('UrineFile')
+                        else:
+                            if(rbc_final == 0):
+                                rbc_final = rbc
+                            if(wbc_final == 0):
+                                wbc_final = wbc
+                            if(pc_final == 0):
+                                pc_final = pc
+                            if(hgb_final == 0):
+                                hgb_final = hgb
+                            if(rcd_final == 0):
+                                rcd_final = rcd
+                            if(mchc_final == 0):
+                                mchc_final = mchc
+                            if(mpv_final == 0):
+                                mpv_final = mpv
+                            if(pcv_final == 0):
+                                pcv_final = pcv
+                            if(mcv_final == 0):
+                                mcv_final = mcv
+                            
+                            initial = {'rbc': rbc_final,
+                                    'wbc': wbc_final,
+                                    'pc': pc_final,
+                                    'hgb': hgb_final,
+                                    'rcd': rcd_final,
+                                    'mchc': mchc_final,
+                                    'mpv': mpv_final,
+                                    'pcv': pcv_final,
+                                    'mcv': mcv_final,
+                                    'name':file_name,
+                                    'file':uploaded_file,
+                                    }
+
+                            request.session["urine_file_name"] = uploaded_file.name
+                        
+                        
+                            form = ConfirmForm(initial=initial)
+                            # cbc.save()
+                            context = {
+                                'form': form,
+                                'file_name': file_name,
+                                # 'confirm_id': request.session["confirm_id"]
+                            }
+                            
+                        
+                    elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                        rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
+                        user = request.user.get_username()
+
+                        if(rbc_final == 0):
+                            rbc_final = rbc
+                        if(wbc_final == 0):
+                            wbc_final = wbc
+                        if(pc_final == 0):
+                            pc_final = pc
+                        if(hgb_final == 0):
+                            hgb_final = hgb
+                        if(rcd_final == 0):
+                            rcd_final = rcd
+                        if(mchc_final == 0):
+                            mchc_final = mchc
+                        if(mpv_final == 0):
+                            mpv_final = mpv
+                        if(pcv_final == 0):
+                            pcv_final = pcv
+                        if(mcv_final == 0):
+                            mcv_final = mcv
+                    
+                        initial = {'rbc': rbc_final,
+                                'wbc': wbc_final,
+                                'pc': pc_final,
+                                'hgb': hgb_final,
+                                'rcd': rcd_final,
+                                'mchc': mchc_final,
+                                'mpv': mpv_final,
+                                'pcv': pcv_final,
+                                'mcv': mcv_final,
+                                'name':file_name,
+                                'file':uploaded_file,
+                                }
+
+                        request.session["biochem_file_name"] = uploaded_file.name
+                        print(request.session["biochem_file_name"])
+                        form = ConfirmForm(initial=initial)
+                        context = {
+                            'form': form
+                        }
+                    else:
+                        messages.error(request,'Please upload .png, .jpg or .pdf file.')
+
+            return render(request, 'HtmlFiles/confirmBiochemForm.html', context)
+    else:
+        print("yessss")
+        return redirect('viewmyreports')
+
+def confirmUrineForm(request):
+    if request.method == 'POST':
+        form = ConfirmForm(request.POST)
+        if form.is_valid():  
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+            print('e')
+    return redirect('viewmyreports')
