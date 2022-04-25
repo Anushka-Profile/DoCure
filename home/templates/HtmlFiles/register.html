@@ -14,8 +14,12 @@
    <link rel="stylesheet" type="text/css" href="{% static 'users/css/register.css' %}">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-  
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<!-- Bootstrap CSS -->
 
   <!--Font awesome link-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -140,38 +144,35 @@ var passs2=document.getElementById('id_password2'); {% endcomment %}
    
   </script>
   <!--Navbar-->
-  <nav class="navbar navbar-expand-lg navbar-light  sticky-top" style="background-color: #	FF66FF">
-    <a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-      height="60"></a>
+  <nav   class="navbar navbar-expand-lg navbar-light bg-transperant sticky-top">
 
-</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <a style="color:black;"  class="navbar-brand" href="/homebefore/">
+    <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+  
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 
-    <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" style="color: black" <a href="{% url 'homebefore' %}">Home <span
-              class="sr-only">(current)</span></a>
-        </li>
+      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 
-        <li class="nav-item active" style="padding: 5px; width: 100px;">
-          <a class="nav-link btn btn-outline-primary btn-sm" style="color: black" role="button"<a href="{% url 'login' %}">LogIn
-            <span class="sr-only"></span></a>
+        <li class="nav-item" >
+            <a style="color:black;" class="nav-link" href="/homebefore/">Home</a>
         </li>
-
-        <li class="nav-item" style="padding: 5px; width: 100px;">
-          <a class="nav-link btn btn-outline-primary btn-sm  "role="button" style="color: black" <a href="{% url 'register' %}">SignUp
-            <span class="sr-only"></span></a>
+  <li class="nav-item">
+            <a style="color:black;" class="nav-link" href="/login/">Login</a>
         </li>
+  <li class="nav-item">
+            <a style="color:black;"  class="nav-link" href="/register/">Register</a>
+        </li>
+        
+  
+        
       </ul>
     </div>
   </nav>
-
-</div>
-</div>
   <!-- signUp-Modal-->
  <div>
 
@@ -184,16 +185,40 @@ var passs2=document.getElementById('id_password2'); {% endcomment %}
          
 	                    	{{ register_form|crispy}}     
                 
-                        <input type="button" onclick="validate()"  value="Register">
-                          Already a member? <a href="/login/">Login</a>
+                        <input type="button" onclick="validate()"  value="Register"><br>
+                         <p style="text-align:center;" </p>Already a member? <a href="/login/">Login</a>
                  
                         </div>
 	</form>
   
+  
 
 </div>
             
-        
+<footer class="footer">
+  <div class="containerf">
+      <div class="rowf">
+          <div class="footer-col">
+              <h4>Docure</h4>
+              <ul>
+                  <li><a href="/about/">About Us</a></li>
+                  <li><a href="#">our services</a></li>
+                  <li><a href="#">privacy policy</a></li>
+                  <!-- <li><a href="#">affiliate program</a></li> -->
+              </ul>
+          </div>
+          <div class="footer-col">
+              <h4>Follow us</h4>
+              <div class="social-links">
+                  <a href="#"><i class="fab fa-facebook-f"></i></a>
+                  <a href="#"><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+          </div>
+      </div>
+  </div>
+</footer>
 
 </div>
 

@@ -29,7 +29,13 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 import os
-ALLOWED_HOSTS = ["*"]
+# SECURITY WARNING: don't run with debug turned on in production!
+if os.environ.get('ON_HEROKU', '0') == '0':
+    DEBUG = True
+else:
+    DEBUG = False
+import os
+ALLOWED_HOSTS = ["docure-ehr.herokuapp.com/","*"]
 
 
 # Application definition
@@ -87,8 +93,7 @@ TEMPLATES = [
         },
     },
 ]
-
-# WSGI_APPLICATION = 'Auth.wsgi.application'
+WSGI_APPLICATION = 'DoCure.wsgi.application'
 
 
 # Database
@@ -136,12 +141,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+MEDIA_URL='/images/'
 STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'statics'),
     )
+TEMPLATE_DIRS = (
+    os.path.join(SETTINGS_PATH, 'templates'),
+)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

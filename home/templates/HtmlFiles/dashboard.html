@@ -18,7 +18,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
 
@@ -26,302 +30,46 @@
 <!-- <img src="{{all_report.file.url}}" alt=""> -->
 
 <body>
-    <div class="containers">
-		<div class="navbar">
+    <div class="ok">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
 
-			<a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-				height="60"></a>
-		   
-			{% if user.is_authenticated %}
-			{% csrf_token %}
-			<nav>
-				<ul>
-					<li><a href="/home/">HOME</a></li>
-					<li><a href="/viewmyreports/">My Reports</a></li>
-                    <li><a href="/viewDoctor/">ViewDoctor</a></li>
-					<li><a  href="/FILE/">Upload</a></li>
-					
-					<li style="color:white">{{name}}</li>
-					<li><a  href="/logout/">Logout</a></li>
-					
-      {% endif %}
-				
-				</ul>
-
-			</nav>
-
-		</div>
-	<style>
-          .range .field{
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top:52px;
-          height: 100%;
-          }
-          .range .field input{
-            -webkit-appearance: none;
-            height: 3px;
-            width: 100%;
-            background: #ddd;
-            border-radius: 5px;
-          }
+            <a class="navbar-brand" href="/home/">
+            <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+            </a>
+      
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
           
-          .range .sliderValue span{
-            position: absolute;
-            height: 45px;
-            width: 45px;
-            background: #5ab47f;
-            color: #fff;
-            font-weight: 500;
-            top: 10px;
-            line-height: 55px;
-            z-index: 2;
-            transform: translateX(-50%) rotate(45deg);
-            border: 3px solid #fff;
-            border-top-left-radius: 50%;
-            border-top-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-          }  
-            
-          
-          
-          div.scroll { 
-          width: 1050px;
-          height: 300px;
-          overflow-x: hidden;
-          overflow-y: auto;
-          text-align:justify;
-          }
-          div.scrolls{ 
-          width: 100%;
-          height: 300px;
-          padding: 2%;
-          overflow-x: hidden;
-          overflow-y: auto;
-          text-align:justify;
-          }
-             
-          
-          .button {
-             font-size: 1em;
-            padding: 10px;
-            color: white;
-            background: #559F9A;
-            border: 2px solid #5ab47f;
-            border-radius: 6px; 
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease-out; 
-          
-          }
-          
-          
-          .overlay {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            transition: opacity 500ms;
-            visibility: hidden;
-            opacity: 0;
-          }
-          .overlay:target {
-            visibility: visible;
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(24px);
-          }
-          
-          .popup {
-            margin: 70px auto;
-            padding: 20px;
-            background-color: black;
-            border-radius: 5px;
-            width: 40%;
-            position: relative;
-            text-align: justify;
-          }
-          .numberCircle {
-            border-radius: 50%;
-            width: 200px;
-            height: 80px;
-            padding: 20px;
-            margin-left:50px;
-           align:center;
-            background: #fff;
-            border: 2px solid orange;
-            color: #666;
-            text-align: center;
-        
-            font: 32px Arial, sans-serif;
-        }
-          .popup h2 {
-            margin-top: 0;
-            color: #333;
-            font-family: Tahoma, Arial, sans-serif;
-          }
-          .popup .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            transition: all 200ms;
-            font-size: 30px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #333;
-          }
-          
-          .popup .content {
-            max-height: 30%;
-            overflow: auto;
-          }
-          
-          @media screen and (max-width: 700px){
-            .box{
-              width: 70%;
-            }
-            .popup{
-              width: 70%;
-            }
-          }
-               
-                .progress {
-                    margin:20px auto;
-                    padding:0;
-                    width:60%;
-                    height:20px;
-                    overflow:hidden;
-                    background:#e5e5e5;
-                    border-radius:6px;
-                  }
-                  .progresss {
-                    margin:20px auto;
-                    padding:0;
-                    width:50%;
-                    height:20px;
-                    overflow:hidden;
-                    background:#e5e5e5;
-                    border-radius:6px;
-                  }
-                  
-                  .bar {
-                      position:relative;
-                    float:left;
-                    min-width:0;
-                    height:100%;
-                    background:cornflowerblue;
-                  }
-                  
-                  .percent {
-                      position:absolute;
-                    top:50%;
-                    left:50%;
-                    transform:translate(-50%,-50%);
-                    margin:0;
-                    font-family:tahoma,arial,helvetica;
-                    font-size:12px;
-                    color:white;
-                  }
-                *{
-              margin: 0;
-              padding: 0;
-              font-family: 'Roboto', sans-serif;
-            }
-            .containers{
-              width:100%;
-              height: 100vh;
-              background-image: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0,0,0,0.7)),url("{% static 'images/BG.jpg' %}");
-              background-size: cover;
-              background-size: cover;
-              padding-left: 8%;
-              padding-right: 8%;
-              box-sizing: border-box;
-            }
-            .navbar{
-              height: 12%;
-              display:flex;
-              align-items: center;
-            }
-            .logo{
-              width:50px;
-              cursor: pointer;
-            }
-            .menu-icon{
-              width:30px;
-              cursor: pointer;
-              margin-left: 40px;
-            }
-            nav{
-              flex: 1;
-              text-align: right;
-            }
-            nav ul li{
-              list-style: none;
-              display: inline-block;
-              margin-left: 60px;
-            }
-            nav ul li a{
-              text-decoration: none;
-              color: #fff;
-              font-size: 13px;
-            }
-            .row{
-              display: flex;
-              height: 88%;
-              align-items: center;
-            }
-            .col{
-              flex-basis: 50%;
-            }
-            h1{
-              color: black;
-              font-size: 100px;
-            }
-            
-            p{
-              color: black;
-              font-size: 11px;
-              line-height: 15px;
-            }
-                @media (max-width: 768px) {
-                    .carousel-inner .carousel-item>div {
-                        display: none;
-                    }
-            
-                    .carousel-inner .carousel-item>div:first-child {
-                        display: block;
-                    }
-                }
-            
-                .carousel-inner .carousel-item.active,
-                .carousel-inner .carousel-item-next,
-                .carousel-inner .carousel-item-prev {
-                    display: flex;
-                }
-            
-                /* display 3 */
-                @media (min-width: 768px) {
-            
-                    .carousel-inner .carousel-item-right.active,
-                    .carousel-inner .carousel-item-next {
-                        transform: translateX(33.333%);
-                    }
-            
-                    .carousel-inner .carousel-item-left.active,
-                    .carousel-inner .carousel-item-prev {
-                        transform: translateX(-33.333%);
-                    }
-                }
-            
-                .carousel-inner .carousel-item-right,
-                .carousel-inner .carousel-item-left {
-                    transform: translateX(0);
-                }
-    </style>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+    
+              <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+    
+                <li class="nav-item">
+                  <font size="+3">  <a class="nav-link"style="color:black;" href="/home/">Home</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3">  <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3"> <a class="nav-link" style="color:black;"href="/upload/">Upload</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3"> <a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a></font>
+                </li>
+                <li class="nav-item">
+          {% if user.is_authenticated %}
+          {% csrf_token %}
+          <font size="+3"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    <font size="+3">  <a class="nav-link" style="color:black;"href="/logout/">Logout</a></font>
+                </li>
+                
+              </ul>
+            </div>
+          </nav>
 <div id="main">
 	
 
@@ -575,17 +323,6 @@
             </div>
 
           
-{% block link %}
-            {% if all_report.file %}
-
-            <h2>DOWNLOAD THE File FROM HERE: <a href="{{all_report.file.url}}" download>{{all_report.name}}</a></h2>
-
-            {% elif all_report.image %}
-
-            <h2>DOWNLOAD THE Image FROM HERE: <a href="{{all_report.image}}" download>{{all_report.name}}</a></h2>
-        
-        {% endif %} 
-{% endblock %}
 
 
 
@@ -594,13 +331,16 @@
     <div style="overflow-x:auto;">  
         <div class="scroll">
         <table>
+            
           <tr>
             <th>Name</th>
             <th>Normal Range</th>
             <th>Report Value</th>
             <th>Remark</th>
           </tr>
+          
           <tr>
+              
             <td>RBC</td>
             <td>4.2-6.1 million cells/mcL</td>
             {% if all_report %}
@@ -999,7 +739,7 @@
         </table>
 
           </div>
-    
+    <br>
     <!---naverbar-2-->
     <div>
         <h1>Doctor Comments</h1>
@@ -1008,8 +748,19 @@
             <p>{{c.field_name}}</p>
         {% endfor %}
     </div>
-    
-    
+    <br>
+    {% block link %}
+            {% if all_report.file %}
+
+            <h2>DOWNLOAD THE File FROM HERE: <br><a href="{{all_report.file.url}}" download>{{all_report.name}}</a></h2>
+
+            {% elif all_report.image %}
+
+            <h2>DOWNLOAD THE Image FROM HERE: <a href="{{all_report.image}}" download>{{all_report.name}}</a></h2>
+        
+        {% endif %} 
+{% endblock %}
+
     <script>
         $('#recipeCarousel').carousel({
             interval: 10000
@@ -1042,6 +793,8 @@
     <hr>
     
     </div> 
+</div>
+</div>
   
 <script>
 

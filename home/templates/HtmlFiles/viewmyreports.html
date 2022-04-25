@@ -11,48 +11,71 @@
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{% static 'users/css/viewmyreports.css' %}">
     <!--Font awesome link-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <title>DoCure</title>
 </head>
 
 <body>
+       
+<div class="ok">
     <!--Navbar-->
-    <div class="containers">
-		<div class="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
 
-			<a class="navbar-brand" <a href="{% url 'home' %}"><img src='{% static 'images/Logo.jpeg' %}' width="120"
-				height="60"></a>
-		   
-			{% if user.is_authenticated %}
-			{% csrf_token %}
-			<nav>
-				<ul>
-					<li><a href="/home/">HOME</a></li>
-					<li><a href="/viewmyreports/">My Reports</a></li>
-					<li><a  href="/FILE/">Upload</a></li>
-                    <li><a  href="/viewDoctor/">Book A Doctor</a></li>
-					
-					<li>{{name}}</li>
-					<li><a  href="/logout/">Logout</a></li>
-					
-      {% endif %}
-				
-				</ul>
+        <a class="navbar-brand" href="/home/">
+        <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+        </a>
+  
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 
-			</nav>
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 
-		</div>
-<body>
-    <table border="1" style="text-align: center;">
-        <h4>My Reports<h4>
+            <li class="nav-item">
+                <a class="nav-link"style="color:black;" href="/home/">Home</a>
+            </li>
+			<li class="nav-item">
+                <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a>
+            </li>
+			<li class="nav-item">
+                <a class="nav-link" style="color:black;"href="/upload/">Upload</a>
+            </li>
+            <li class="nav-item">
+                <font size="+2"><a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a></font>
+            </li>
+			<li class="nav-item">
+      {% if user.is_authenticated %}
+      {% csrf_token %}
+      <font size="+3"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+                {% endif %}
+            </li>
+			<li class="nav-item">
+                <a class="nav-link" style="color:black;"href="/logout/">Logout</a>
+            </li>
+            
+          </ul>
+        </div>
+      </nav>
+
+    <table border="1" style="text-align: center; margin-left:15%;">
+        <h4 style="margin-top:5%;">My Reports<h4>
         
         {% if posts %}
        
         <tr>
             <th>Time of Report</th>
-            <th>Full Username</th>
+            <th>Filename</th>
             <th>View Dashboard</th>
+            <th>Delete Report</th>
           </tr>
           {% for i in page_obj.object_list %}
         <tr>
@@ -91,6 +114,31 @@
             <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #}
         {% endif %}
     </center>
-
+    <footer class="footer">
+        <div class="containerf">
+            <div class="rowf">
+                <div class="footer-col">
+                    <h4>Docure</h4>
+                    <ul>
+                        <li><a href="/about/">About Us</a></li>
+                        <li><a href="#">our services</a></li>
+                        <li><a href="#">privacy policy</a></li>
+                        <!-- <li><a href="#">affiliate program</a></li> -->
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+  
+</div>
 </body>
 </html>

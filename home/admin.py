@@ -1,8 +1,7 @@
-from xml.etree.ElementTree import Comment
-from cv2 import FileStorage
+# from xml.etree.ElementTree import Comment
 from django.contrib import admin
 
-from home.views import viewDoctor
+
 from .models import User
 from .models import Cbc
 from  .models import Comments

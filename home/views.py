@@ -1,7 +1,7 @@
 from multiprocessing import context
 from site import USER_BASE
-from tkinter.font import names
-from tkinter.tix import Form
+# from tkinter.font import names
+# from tkinter.tix import Form
 from urllib import request
 from django.shortcuts import render, redirect 
 from django.http import HttpResponse
@@ -21,7 +21,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from matplotlib.pyplot import rcdefaults, text
 from numpy import delete
-# from platformdirs import Path
+from platformdirs import Path
 from DoCure.settings import EMAIL_HOST_USER
 
 from django.contrib.auth.forms import AuthenticationForm
@@ -55,6 +55,7 @@ from django.core.files.storage import default_storage
 
 # Create your views here.
 from .models import *
+
 
 def home(request):
     name=request.user.username or None
@@ -361,7 +362,7 @@ def docRequest(request, doc_id):
 
 def GetInfoOCR(path):
     cbc = path
-    pytesseract.pytesseract.tesseract_cmd = r'E:\\Programming\Django\DoCure-master\\tesseract//tesseract.exe' #enter your path here
+    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract' #enter your path here
     text = pytesseract.image_to_string(Image.open(cbc))
 
     print(text)
@@ -370,12 +371,11 @@ def GetInfoOCR(path):
 
 
 
-def FILE(request):
+def upload(request):
     name=request.user.username or None
     context = {}    
-    # form = UploadForm()
     request.session["confirm_id"] = 1
-    return render(request, 'HtmlFiles/FILE.html', {'name':name})
+    return render(request, 'HtmlFiles/upload.html',context= {'name':name})
 
 
 def fileData(request):
@@ -398,20 +398,18 @@ def fileData(request):
             try:
                 uploaded_file = request.FILES['document']
                 for f in request.FILES.getlist('document'): 
-                    print("-----------------------------------------------------------------------------")
+                   
                     uploaded_file = f
-                    print(uploaded_file)
-                    print("-----------------------------------------------------------------------------")
-                
+                    
             except Exception as e:
                 messages.error(request,'No file is uploaded.')
-                return redirect('FILE')
+                return redirect('upload')
             else:
                 for f in request.FILES.getlist('document'): 
-                    print("-----------------------------------------------------------------------------")
+                  
                     uploaded_file = f
                     print(uploaded_file)
-                    print("-----------------------------------------------------------------------------")
+                  
                     namess=request.POST.get('reportname')
                     filepassword=request.POST.get('password')
                     print(filepassword)
@@ -429,7 +427,7 @@ def fileData(request):
                             print(rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
-                            return redirect('FILE')
+                            return redirect('upload')
                         else:
                             if(rbc_final == 0):
                                 rbc_final = rbc
@@ -731,9 +729,12 @@ def addComment(request):
     return redirect('redocDashboard')
 
 # def addAnotherFile(request):
+# from admin import download_csv
+# #     report = Cbc.objects.last()
+# def getCsv(request):
+#     data = download_csv(ModelAdmin, request, Cbc.objects.all())
 
-#     report = Cbc.objects.last()
-
+#     return HttpResponse (data, content_type='text/csv')
 
 
 def Doctorlogin(request):
@@ -766,18 +767,20 @@ def Doctorlogin(request):
         return render(request, 'HtmlFiles/Doctorlogin.html')
         
 def doctorProfile(request):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     context={}
     print(request.session['ConfirmDoctor_id'])
     confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     all_docs= Doctor.objects.get(confirmdoctor = confirm_doc)  
-    return render(request,'HtmlFiles/doctorProfile.html',context={'all_docs':all_docs})
+    return render(request,'HtmlFiles/doctorProfile.html',context={'all_docs':all_docs,'name':name})
 
 def dgetEditProfile(request):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     confirm_doc=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     instance = Doctor.objects.get(confirmdoctor = confirm_doc)
     form = EditProfileDoctor(instance=instance)
 
-    return render(request,'HtmlFiles/deditProfile.html',context={'form':form})
+    return render(request,'HtmlFiles/dEditProfile.html',context={'form':form,'name':name})
 
 def dEditProfile(request):   
     if request.method == "POST":
@@ -787,17 +790,18 @@ def dEditProfile(request):
         editform = EditProfileDoctor(request.POST, instance = instance)
         if editform.is_valid():
             editform.save()
-        return render('doctorProfile')	
+        return redirect('doctorProfile')	
 def Doctorlogout_view(request):
 		del request.session['ConfirmDoctor_id']
 		messages.info(request, "You have successfully logged out.") 
 		return redirect("Doctorlogin")
 
 def docViewReports(request, user_id):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     user = User.objects.get(id =user_id)
     request.session['user_id']=user_id
     all_reports= Cbc.objects.filter(user=user).order_by("-date") #.filter(user=request.user)
-    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports})
+    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports,'name':name})
 
 def reports(request):
     if 'confirm_id' in request.session:
