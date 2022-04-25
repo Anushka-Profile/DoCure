@@ -64,6 +64,8 @@ path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('deletePatient/<int:rid>', views.deleteReport, name="deleteReport"),
   path('allreports/', views.allreports, name="allreports"),
   path('fileData/', views.fileData, name="fileData"),
+  path('fileStorage/', views.fileStorage, name="fileStorage"),
+  path('fileUpload/', views.fileUpload, name="fileUpload"),
 
 url(r'^media/(?P<path>.)$', serve,{'document_root':       settings.MEDIA_ROOT}), 
     url(r'^static/(?P<path>.)$', serve,{'document_root': settings.STATIC_ROOT}),

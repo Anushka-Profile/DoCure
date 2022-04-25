@@ -1,3 +1,4 @@
 venv/
 Tesseract-OCR/
 db.sqlite3/
+.env

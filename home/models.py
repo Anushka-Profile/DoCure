@@ -67,6 +67,16 @@ class Cbc(models.Model):
     date = models.DateTimeField(default=timezone.now)
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
+    rbc_enc = models.BinaryField(default=None, null=True, editable=True)
+    wbc_enc = models.BinaryField(default=None, null=True, editable=True)
+    pc_enc = models.BinaryField(default=None, null=True, editable=True)
+    hgb_enc = models.BinaryField(default=None, null=True, editable=True)
+    rcd_enc = models.BinaryField(default=None, null=True, editable=True)
+    mchc_enc = models.BinaryField(default=None, null=True, editable=True)
+    mpv_enc = models.BinaryField(default=None, null=True, editable=True)
+    pcv_enc = models.BinaryField(default=None, null=True, editable=True)
+    mcv_enc = models.BinaryField(default=None, null=True, editable=True)
+   
 
 class tempFileStorage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -80,3 +90,8 @@ class  Comments(models.Model):
      field_name = models.TextField(max_length=500)
     
 
+class FileStore(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(default=None, null=True)
+    file = models.FileField(default=None, null=True)
+    date = models.DateTimeField(default=timezone.now)
