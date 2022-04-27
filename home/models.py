@@ -21,6 +21,7 @@ class User(AbstractUser):
     gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     height=models.IntegerField(null=False, default=0)
     weight=models.IntegerField(null=False, default=0)
+    date=models.DateField(null=False,default=timezone.now)
     def __str__(self):
         return self.last_name + " " + self.first_name 
     class Meta:  

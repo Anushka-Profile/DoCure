@@ -52,7 +52,10 @@ from django.core.files.storage import default_storage
 from itertools import chain
  
 
-
+import requests
+url = "https://app.nanonets.com/api/v2/OCR/Models/"
+payload = {}
+response = requests.request("GET", url, data = payload, auth=('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''))
 
 # Create your views here.
 from .models import *
@@ -363,13 +366,15 @@ def docRequest(request, doc_id):
     return redirect("viewDoctor")
 
 def GetInfoOCR(path):
-    cbc = path
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
-    # pytesseract.pytesseract.tesseract_cmd= r'C:\Users\tirth\AppData\Local\Programs\Tesseract-OCR\tesseract.exe' #enter your path here
-    text = pytesseract.image_to_string(Image.open(cbc))
-
+    cbc = path.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
+    print(type(cbc))
+    data = {'file': open('media/'+cbc, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
+    
 
 
 

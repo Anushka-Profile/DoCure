@@ -19,11 +19,14 @@
    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<!-- Bootstrap CSS -->
-
   <!--Font awesome link-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>SignUp</title>
+
+  <!-- Fengyuan Chen's Datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
@@ -51,7 +54,8 @@
       var pass2 = document.getElementById('id_password2').value;
       var passs2 = document.getElementById('id_password2');
 
-      
+      var bd=document.getElementById('id_date').value;
+      var bda=document.getElementById('id_date')
       var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       var we=/^\d{2,3} ?$/;
       var fname=/^[A-Za-z]+$/;
@@ -60,6 +64,8 @@
       var he=/^[0-9]+ ?(\'cm\")?( *[1-9]+ ?(\"cm)?)?$/;
   if(usa.value!=""){
     usa.style.border = "green solid 3px";
+    if(bda.value!=""){
+    bda.style.border = "green solid 3px";
     if(gen.value!=""){
    
    gen.style.border = "green solid 3px";
@@ -113,6 +119,9 @@
     return false;
 
   }}
+  else{
+    bda.style.border="red solid 3px";
+  }}
 else{
   usa.style.border = "red solid 3px";
     return false;
@@ -143,6 +152,7 @@ var pass2=document.getElementById('id_password2').value;
 var passs2=document.getElementById('id_password2'); {% endcomment %}
    
   </script>
+
   <!--Navbar-->
   <nav   class="navbar navbar-expand-lg navbar-light bg-transperant sticky-top">
 
@@ -180,8 +190,7 @@ var passs2=document.getElementById('id_password2'); {% endcomment %}
     
         <form id="myForm" method="post">
           {% csrf_token %}
-          <h1>Register</h1>
-          <div class="scroll">
+          <h1>Register</h1>          <div class="scroll">
          
 	                    	{{ register_form|crispy}}     
                 
@@ -195,30 +204,6 @@ var passs2=document.getElementById('id_password2'); {% endcomment %}
 
 </div>
             
-<footer class="footer">
-  <div class="containerf">
-      <div class="rowf">
-          <div class="footer-col">
-              <h4>Docure</h4>
-              <ul>
-                  <li><a href="/about/">About Us</a></li>
-                  <li><a href="#">our services</a></li>
-                  <li><a href="#">privacy policy</a></li>
-                  <!-- <li><a href="#">affiliate program</a></li> -->
-              </ul>
-          </div>
-          <div class="footer-col">
-              <h4>Follow us</h4>
-              <div class="social-links">
-                  <a href="#"><i class="fab fa-facebook-f"></i></a>
-                  <a href="#"><i class="fab fa-twitter"></i></a>
-                  <a href="#"><i class="fab fa-instagram"></i></a>
-                  <a href="#"><i class="fab fa-linkedin-in"></i></a>
-              </div>
-          </div>
-      </div>
-  </div>
-</footer>
 
 </div>
 

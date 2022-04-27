@@ -14,7 +14,7 @@ from django.core.validators import RegexValidator
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
     
-    username= forms.CharField(label='Usename', 
+    username= forms.CharField(label='Username', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your username'}),help_text='Enter Username in any format')
     first_name= forms.CharField(label='First_name', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Firstname'}),help_text='Enter Firstname in alphabets only')
@@ -26,14 +26,14 @@ class NewUserForm(UserCreationForm):
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Height in cms'}),help_text='Enter height in Numbers only')
     weight= forms.IntegerField(label='Weight', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Weight in Kg'}),help_text='Enter Weight in Numbers only')
-    # dob= forms.DateField(label='Date', 
-    #                 widget=forms.TextInput(attrs={'placeholder': 'Enter your dob'}))
+    date= forms.DateField(label='Date of birth', 
+                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}))
     
     
 
     class Meta:
         model = User
-        fields = ("username","first_name",'last_name', "email", "password1", "password2","height","weight","gender")
+        fields = ("username","first_name",'last_name', "email", "password1", "password2","height","weight","gender","date")
 
     def save(self, commit=True):
         user = super(NewUserForm, self).save(commit=False)
@@ -124,9 +124,11 @@ class EditProfile(forms.ModelForm):
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Height in cms'}),help_text='Enter height in Numbers only')
     weight= forms.IntegerField(label='Weight', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Weight in Kg'}),help_text='Enter Weight in Numbers only')
+    date= forms.DateField(label='Date of birth', 
+                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}))
     class Meta:
         model = User
-        fields = ("username","first_name",'last_name', "email", "height","weight","gender")
+        fields = ("username","first_name",'last_name', "email", "height","weight","gender","date")
 
 class ConfirmUrineForm(forms.ModelForm):
     

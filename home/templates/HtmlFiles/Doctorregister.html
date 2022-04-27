@@ -46,8 +46,7 @@
         var gen=document.getElementById('id_gender');
 
 
-        {% comment %} var gends = gen.options[gen.selectedIndex].value;
-        var sepss = spes.options[spes.selectedIndex].value; {% endcomment %}
+       
         
         var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
        var phone=/^\+?1?\d{10,15}$/;
@@ -145,9 +144,9 @@
          <div class="scroll">
 	                    	{{ register_form|crispy}}     
                          
-                        <input type="button"  onclick="validate()" value="Register">
+                        <input type="button"  onclick="validate()" value="DoctorRegister">
         
-                          Already a member? <a href="/Doctorlogin/">Signup</a>
+                          Already a member? <a href="/Doctorlogin/">Login</a>
 
                       </div>
 	</form>
