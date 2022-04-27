@@ -95,3 +95,11 @@ class FileStore(models.Model):
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
     date = models.DateTimeField(default=timezone.now)
+
+class Urine(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name= models.CharField(max_length=150,null=True,blank=False)
+    date = models.DateTimeField(default=timezone.now)
+    image = models.ImageField(default=None, null=True)
+    file = models.FileField(default=None, null=True)
+    glucose = models.CharField(max_length=150,default=None ,null=True,blank=False)
