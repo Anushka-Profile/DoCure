@@ -1017,7 +1017,38 @@ def extractUrine(text):
     glucose = glucose_re.search(text)
     if (glucose != None):
         glu = glucose[2]
-    return glu
+    else:
+        glu = None
+        
+    ketones_re = re.compile(r'(.*[kK]etones\W*)(\w+)')
+    ketones = ketones_re.search(text)
+    if (ketones != None):
+        ket = ketones[2]
+    else:
+        ket = None
+        
+    reaction_re = re.compile(r'(.*[rR]eaction.*|.*pH\W*)(\w+)')
+    reaction = reaction_re.search(text)
+    if (reaction != None):
+        reac = reaction[2]
+    else:
+        reac = None
+    
+    sg_re = re.compile(r'(.*[Ss]pecific\D*)([\d,.]+)')
+    sg = sg_re.search(text)
+    if (reaction != None):
+        sg = sg[2]
+    else:
+        sg = None
+        
+    uro_re = re.compile(r'(.*[uU]robilinogen\W*)(\w+)')
+    uro = uro_re.search(text)
+    if (uro != None):
+        uro = uro[2]
+    else:
+        uro = None
+    
+    return glu, ket, reac, sg, uro
 
 
 def UrineFileData(request):
@@ -1060,7 +1091,7 @@ def UrineFileData(request):
                         try:
                             text = getPDFText(uploaded_file,filepassword)
                             print(text)
-                            glu = extractUrine(text)
+                            glu, ket, reac, sg, uro = extractUrine(text)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
                             return redirect('UrineFile')
@@ -1068,9 +1099,21 @@ def UrineFileData(request):
                          
                             if(glu == ''):
                                 glu = glu
+                            if(ket == ''):
+                                ket = ket
+                            if(reac == ''):
+                                reac = reac
+                            if(sg == None):
+                                sg = sg
+                            if(uro == ''):
+                                uro = uro
                             
                             initial = {
                                     'glucose': glu,
+                                    'ketones': ket,
+                                    'reaction': reac,
+                                    'sg': sg,
+                                    'uro': uro,
                                     'name':file_name,
                                     'file':uploaded_file,
                                     }
@@ -1090,13 +1133,25 @@ def UrineFileData(request):
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
                         text = getImageText(uploaded_file)
                         print(text)
-                        glu = extractUrine(text)
+                        glu, ket, reac, sg, uro  = extractUrine(text)
                         user = request.user.get_username()
                         if(glu == ''):
                             glu = glu
+                        if(ket == ''):
+                            ket = ket
+                        if(reac == ''):
+                            reac = reac
+                        if(sg == None):
+                            sg = sg
+                        if(uro == ''):
+                            uro = uro
                         
                         initial = {
                                 'glucose': glu,
+                                'ketones': ket,
+                                'reaction': reac,
+                                'sg': sg,
+                                'uro': uro,
                                 'name':file_name,
                                 'file':uploaded_file,
                                 }

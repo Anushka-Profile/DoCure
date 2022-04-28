@@ -103,3 +103,7 @@ class Urine(models.Model):
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
     glucose = models.CharField(max_length=150,default=None ,null=True,blank=False)
+    ketones = models.CharField(max_length=150,default=None ,null=True,blank=False)
+    reaction = models.CharField(max_length=150,default=None ,null=True,blank=False)
+    sg = models.FloatField(null=True,blank=True,default=None,max_length=150)
+    uro = models.CharField(max_length=150,default=None ,null=True,blank=False)

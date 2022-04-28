@@ -132,4 +132,4 @@ class ConfirmUrineForm(forms.ModelForm):
     
     class Meta:
         model = Urine
-        fields = ("name","glucose")
+        fields = ("name","glucose", "ketones", "reaction", "sg", "uro")
