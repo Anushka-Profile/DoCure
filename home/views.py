@@ -762,10 +762,65 @@ def docDashboard(request, rid):
 
 def redocDashboard(request):
     rid=request.session['rid']
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
-
+   
     all_reports= Cbc.objects.get(id=rid)
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    context={}
+    wbc = float(f.decrypt(all_reports.wbc_enc))
+    print(wbc)
+
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
 
 
 
@@ -1055,10 +1110,12 @@ def getPDFText(file, password):
     return text
 
 def getImageText(uploaded_file):
-    cbc = uploaded_file
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #enter your path here
-    text = pytesseract.image_to_string(Image.open(cbc))
-
+    urine = uploaded_file.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
+    print(type(urine))
+    data = {'file': open('media/'+urine, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
     return text
                         
 def UrineFile(request):
@@ -1073,39 +1130,7 @@ def extractUrine(text):
     glucose = glucose_re.search(text)
     if (glucose != None):
         glu = glucose[2]
-    else:
-        glu = None
-        
-    ketones_re = re.compile(r'(.*[kK]etones\W*)(\w+)')
-    ketones = ketones_re.search(text)
-    if (ketones != None):
-        ket = ketones[2]
-    else:
-        ket = None
-        
-    reaction_re = re.compile(r'(.*[rR]eaction.*|.*pH\W*)(\w+)')
-    reaction = reaction_re.search(text)
-    if (reaction != None):
-        reac = reaction[2]
-    else:
-        reac = None
-    
-    sg_re = re.compile(r'(.*[Ss]pecific\D*)([\d,.]+)')
-    sg = sg_re.search(text)
-    if (reaction != None):
-        sg = sg[2]
-    else:
-        sg = None
-        
-    uro_re = re.compile(r'(.*[uU]robilinogen\W*)(\w+)')
-    uro = uro_re.search(text)
-    if (uro != None):
-        uro = uro[2]
-    else:
-        uro = None
-    
-    return glu, ket, reac, sg, uro
-
+    return glu
 
 
 def UrineFileData(request):
@@ -1148,7 +1173,7 @@ def UrineFileData(request):
                         try:
                             text = getPDFText(uploaded_file,filepassword)
                             print(text)
-                            glu, ket, reac, sg, uro = extractUrine(text)
+                            glu = extractUrine(text)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
                             return redirect('UrineFile')
@@ -1156,21 +1181,9 @@ def UrineFileData(request):
                          
                             if(glu == ''):
                                 glu = glu
-                            if(ket == ''):
-                                ket = ket
-                            if(reac == ''):
-                                reac = reac
-                            if(sg == None):
-                                sg = sg
-                            if(uro == ''):
-                                uro = uro
                             
                             initial = {
                                     'glucose': glu,
-                                    'ketones': ket,
-                                    'reaction': reac,
-                                    'sg': sg,
-                                    'uro': uro,
                                     'name':file_name,
                                     'file':uploaded_file,
                                     }
@@ -1190,25 +1203,13 @@ def UrineFileData(request):
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
                         text = getImageText(uploaded_file)
                         print(text)
-                        glu, ket, reac, sg, uro  = extractUrine(text)
+                        glu = extractUrine(text)
                         user = request.user.get_username()
                         if(glu == ''):
                             glu = glu
-                        if(ket == ''):
-                            ket = ket
-                        if(reac == ''):
-                            reac = reac
-                        if(sg == None):
-                            sg = sg
-                        if(uro == ''):
-                            uro = uro
                         
                         initial = {
                                 'glucose': glu,
-                                'ketones': ket,
-                                'reaction': reac,
-                                'sg': sg,
-                                'uro': uro,
                                 'name':file_name,
                                 'file':uploaded_file,
                                 }
@@ -1255,3 +1256,12 @@ def deleteUrineReport(request, rid):
     user=request.user or None
     name=request.user.username or None
     return redirect('viewmyreports')
+def dashboardUrine(request,rid):
+    context={}
+    name=request.user.username or None
+  
+    urine_reports= Urine.objects.get(user=request.user, id=rid)
+    all_comments = Comments.objects.filter(user=request.user, report=urine_reports)
+    
+    print(urine_reports.file.path)
+    return render(request,'HtmlFiles/dashboardUrine.html',context={'name':name,'urine_report':urine_reports, 'all_comments':all_comments})

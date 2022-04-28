@@ -33,7 +33,7 @@ class Doctor(models.Model):
     Surname=models.CharField(max_length=100)
     email=models.CharField(max_length=250,unique=True)
     phone_number = models.CharField(max_length=17,blank=False, unique=True) # Validators should be a list
-    Specialization=models.CharField(choices=[('Orthopedics','Orthopedics'),(' Internal Medicine',' Internal Medicine'),('Obstetrics and Gynecology','Obstetrics and Gynecology'),('Dermatology','Dermatology'),('Pediatrics','Pediatrics'),('General Surgery','General Surgery')],max_length=50)
+    Specialization=models.CharField(choices=[('Orthopedics','Orthopedics'),(' Internal Medicine',' Internal Medicine'),('Obstetrics and Gynecology','Obstetrics and Gynecology'),('Dermatology','Dermatology'),('Pediatrics','Pediatrics'),('General Surgery','General Surgery'),('Radiology','Radiology'),('Ophthalmology','Ophthalmology'),(' Family Medicine',' Family Medicine'),('ENT','ENT')],max_length=500)
     gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     USERNAME_FIELD = 'username'
     

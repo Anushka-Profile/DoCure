@@ -94,17 +94,24 @@
       var fna= document.getElementById('id_first_name');
       var ln=document.getElementById('id_last_name').value;
       var lna= document.getElementById('id_last_name');
+      var pass1 = document.getElementById('id_password1').value;
+      var passs1 = document.getElementById('id_password1');
 
+      var pass2 = document.getElementById('id_password2').value;
+      var passs2 = document.getElementById('id_password2');
 
-      
+      var bd=document.getElementById('id_date').value;
+      var bda=document.getElementById('id_date')
       var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       var we=/^\d{2,3} ?$/;
       var fname=/^[A-Za-z]+$/;
       var lname=/^[A-Za-z]+$/;
-      
+      var pass=/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}+$/;
       var he=/^[0-9]+ ?(\'cm\")?( *[1-9]+ ?(\"cm)?)?$/;
   if(usa.value!=""){
     usa.style.border = "green solid 3px";
+    if(bda.value!=""){
+    bda.style.border = "green solid 3px";
     if(gen.value!=""){
    
    gen.style.border = "green solid 3px";
@@ -114,6 +121,9 @@
         lna.style.border = "green solid 3px";
         if (re.test(em) ){
           ema.style.border = "green solid 3px";
+          if (pass1 == pass2 and pass.test(pass1) and pass.test(pass2)){
+            passs1.style.border = "green solid 3px";
+            passs2.style.border = "green solid 3px";
             if(he.test(hei)){ 
               heig.style.border = "green solid 3px";
               if(we.test(wei)){
@@ -127,8 +137,12 @@
                  else{
                   heig.style.border = "red solid 3px";
                   return false;}}
-                 
+                 else{
+                  passs1.style.border = "red  solid 3px";
+                  passs2.style.border = "red solid 3px";
+                 }
             
+            }
             
 
       else{
@@ -151,13 +165,16 @@
     return false;
 
   }}
+  else{
+    bda.style.border="red solid 3px";
+  }}
 else{
+ 
   usa.style.border = "red solid 3px";
     return false;
 
   }
   }
-
   </script>
     <h1 style="text-align:center;">Please confirm if these values are correct.</h1> 
     <div class="st">

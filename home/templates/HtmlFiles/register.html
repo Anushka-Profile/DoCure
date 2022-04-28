@@ -60,7 +60,7 @@
       var we=/^\d{2,3} ?$/;
       var fname=/^[A-Za-z]+$/;
       var lname=/^[A-Za-z]+$/;
-      
+      var pass=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/;
       var he=/^[0-9]+ ?(\'cm\")?( *[1-9]+ ?(\"cm)?)?$/;
   if(usa.value!=""){
     usa.style.border = "green solid 3px";
@@ -75,7 +75,7 @@
         lna.style.border = "green solid 3px";
         if (re.test(em) ){
           ema.style.border = "green solid 3px";
-          if (pass1 == pass2){
+          if (pass1 == pass2 ){
             passs1.style.border = "green solid 3px";
             passs2.style.border = "green solid 3px";
             if(he.test(hei)){ 
@@ -123,7 +123,7 @@
     bda.style.border="red solid 3px";
   }}
 else{
-  document.getElementById("error0").innerHTML="Enter UserID";
+ 
   usa.style.border = "red solid 3px";
     return false;
 
@@ -142,6 +142,7 @@ if (pass1 ==pass2) {
 document.getElementById("myForm").submit();
 ;
 } else {
+  && pass.test(pass1) && pass.test(pass2)
 passs2.style.border = "red solid 3px";
             return false;
 
