@@ -123,6 +123,7 @@
     bda.style.border="red solid 3px";
   }}
 else{
+  document.getElementById("error0").innerHTML="Enter UserID";
   usa.style.border = "red solid 3px";
     return false;
 
@@ -189,8 +190,10 @@ var passs2=document.getElementById('id_password2'); {% endcomment %}
       <div class="center">
     
         <form id="myForm" method="post">
+       
           {% csrf_token %}
-          <h1>Register</h1>          <div class="scroll">
+          <h1>Register</h1>          
+          <div class="scroll">
          
 	                    	{{ register_form|crispy}}     
                 

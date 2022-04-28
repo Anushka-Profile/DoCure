@@ -41,25 +41,25 @@
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 
             <li class="nav-item">
-                <a class="nav-link"style="color:black;" href="/home/">Home</a>
-            </li>
-			<li class="nav-item">
-                <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a>
-            </li>
-			<li class="nav-item">
-                <a class="nav-link" style="color:black;"href="/allreports/">Upload</a>
+                <font size="+3"><a class="nav-link" style="color:black; font-size: 50%; " href="/home/">Home</a></font>
             </li>
             <li class="nav-item">
-                <font size="+2"><a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a></font>
+                <font size="+3">  <a class="nav-link"style=" color:black; font-size: 50%;" href="/viewmyreports/">MyReports</a></font>
             </li>
-			<li class="nav-item">
+            <li class="nav-item">
+                <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/allreports/">Upload</a></font>
+            </li>
+            <li class="nav-item">
+                <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/viewDoctor/" >Book A Doctor</a></font>
+            </li>
+            <li class="nav-item">
       {% if user.is_authenticated %}
       {% csrf_token %}
-      <font size="+3"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+      <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/userProfile/">{{name}}</a></font>
                 {% endif %}
             </li>
-			<li class="nav-item">
-                <a class="nav-link" style="color:black;"href="/logout/">Logout</a>
+            <li class="nav-item">
+                <font size="+3">  <a class="nav-link" style="color:black; font-size: 50%;"href="/logout/">Logout</a></font>
             </li>
             
           </ul>
@@ -128,30 +128,7 @@
             <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #}
         {% endif %}
     </center>
-    <footer class="footer">
-        <div class="containerf">
-            <div class="rowf">
-                <div class="footer-col">
-                    <h4>Docure</h4>
-                    <ul>
-                        <li><a href="/about/">About Us</a></li>
-                        <li><a href="#">our services</a></li>
-                        <li><a href="#">privacy policy</a></li>
-                        <!-- <li><a href="#">affiliate program</a></li> -->
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Follow us</h4>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+   
   
 </div>
 </body>

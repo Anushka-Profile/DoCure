@@ -387,7 +387,7 @@ def upload(request):
 
 def fileData(request):
     # print(request.session["confirm_id"])
-    print("YOOOOO")
+   
     if "confirm_id" in request.session:
     
         context = {}
@@ -527,7 +527,6 @@ def fileData(request):
 
             return render(request, 'HtmlFiles/confirmForm.html', context)
     else:
-        print("yessss")
         return redirect('viewmyreports')
 
     # return redirect('FILE')
@@ -539,10 +538,10 @@ environ.Env.read_env()
 key: bytes = bytes(env('KEY'),'ascii')
 # print(key)
 # print(type(key))
-
 from cryptography.fernet import Fernet
 # key = b'nMkhkaca8wdcK9NDPKmNCFOggEp0OwfPOqLl3BhpyHI='
 f = Fernet(key)
+
 def confirmForm(request):
     if request.method == 'POST':
         form = ConfirmForm(request.POST)
@@ -700,14 +699,66 @@ def dashboard(request,rid):
 
 
 def docDashboard(request, rid):
-    # print(user_id)
-    # user = User.objects.get(id=user_id)
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
    
     all_reports= Cbc.objects.get(id=rid)
+    context={}
+    wbc = float(f.decrypt(all_reports.wbc_enc))
+    print(wbc)
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
 
 def redocDashboard(request):
     rid=request.session['rid']
@@ -1022,7 +1073,39 @@ def extractUrine(text):
     glucose = glucose_re.search(text)
     if (glucose != None):
         glu = glucose[2]
-    return glu
+    else:
+        glu = None
+        
+    ketones_re = re.compile(r'(.*[kK]etones\W*)(\w+)')
+    ketones = ketones_re.search(text)
+    if (ketones != None):
+        ket = ketones[2]
+    else:
+        ket = None
+        
+    reaction_re = re.compile(r'(.*[rR]eaction.*|.*pH\W*)(\w+)')
+    reaction = reaction_re.search(text)
+    if (reaction != None):
+        reac = reaction[2]
+    else:
+        reac = None
+    
+    sg_re = re.compile(r'(.*[Ss]pecific\D*)([\d,.]+)')
+    sg = sg_re.search(text)
+    if (reaction != None):
+        sg = sg[2]
+    else:
+        sg = None
+        
+    uro_re = re.compile(r'(.*[uU]robilinogen\W*)(\w+)')
+    uro = uro_re.search(text)
+    if (uro != None):
+        uro = uro[2]
+    else:
+        uro = None
+    
+    return glu, ket, reac, sg, uro
+
 
 
 def UrineFileData(request):
@@ -1065,7 +1148,7 @@ def UrineFileData(request):
                         try:
                             text = getPDFText(uploaded_file,filepassword)
                             print(text)
-                            glu = extractUrine(text)
+                            glu, ket, reac, sg, uro = extractUrine(text)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
                             return redirect('UrineFile')
@@ -1073,9 +1156,21 @@ def UrineFileData(request):
                          
                             if(glu == ''):
                                 glu = glu
+                            if(ket == ''):
+                                ket = ket
+                            if(reac == ''):
+                                reac = reac
+                            if(sg == None):
+                                sg = sg
+                            if(uro == ''):
+                                uro = uro
                             
                             initial = {
                                     'glucose': glu,
+                                    'ketones': ket,
+                                    'reaction': reac,
+                                    'sg': sg,
+                                    'uro': uro,
                                     'name':file_name,
                                     'file':uploaded_file,
                                     }
@@ -1095,13 +1190,25 @@ def UrineFileData(request):
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
                         text = getImageText(uploaded_file)
                         print(text)
-                        glu = extractUrine(text)
+                        glu, ket, reac, sg, uro  = extractUrine(text)
                         user = request.user.get_username()
                         if(glu == ''):
                             glu = glu
+                        if(ket == ''):
+                            ket = ket
+                        if(reac == ''):
+                            reac = reac
+                        if(sg == None):
+                            sg = sg
+                        if(uro == ''):
+                            uro = uro
                         
                         initial = {
                                 'glucose': glu,
+                                'ketones': ket,
+                                'reaction': reac,
+                                'sg': sg,
+                                'uro': uro,
                                 'name':file_name,
                                 'file':uploaded_file,
                                 }
