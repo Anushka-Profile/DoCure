@@ -47,25 +47,25 @@
               <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
     
                 <li class="nav-item">
-                  <font size="+3">  <a class="nav-link"style="color:black;" href="/home/">Home</a></font>
+                    <font size="+3"><a class="nav-link" style="color:black; font-size: 50%; " href="/home/">Home</a></font>
                 </li>
                 <li class="nav-item">
-                    <font size="+3">  <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a></font>
+                    <font size="+3">  <a class="nav-link"style=" color:black; font-size: 50%;" href="/viewmyreports/">MyReports</a></font>
                 </li>
                 <li class="nav-item">
-                    <font size="+3"> <a class="nav-link" style="color:black;"href="/allreports/">Upload</a></font>
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/allreports/">Upload</a></font>
                 </li>
                 <li class="nav-item">
-                    <font size="+3"> <a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a></font>
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/viewDoctor/" >Book A Doctor</a></font>
                 </li>
                 <li class="nav-item">
           {% if user.is_authenticated %}
           {% csrf_token %}
-          <font size="+3"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+          <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/userProfile/">{{name}}</a></font>
                     {% endif %}
                 </li>
                 <li class="nav-item">
-                    <font size="+3">  <a class="nav-link" style="color:black;"href="/logout/">Logout</a></font>
+                    <font size="+3">  <a class="nav-link" style="color:black; font-size: 50%;"href="/logout/">Logout</a></font>
                 </li>
                 
               </ul>
@@ -727,14 +727,15 @@
           </div>
     <br>
     <!---naverbar-2-->
-    <div>
+    <div class="commentsss">
         <h1>Doctor Comments</h1>
         {% for c in all_comments %}
-            <h2>{{c.doctor.username}}</h2>
-            <p>{{c.field_name}}</p>
+            <h2 style="margin-left:-75%;">Doctor:{{c.doctor.username}}</h2>
+            <p style="font-size: 150%; margin-left:-55%;">{{c.field_name}}</p></font>
         {% endfor %}
     </div>
     <br>
+    <div class="filess">
     {% block link %}
             {% if all_report.file %}
 
@@ -746,6 +747,7 @@
         
         {% endif %} 
 {% endblock %}
+    </div>
 
     <script>
         $('#recipeCarousel').carousel({

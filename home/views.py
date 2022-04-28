@@ -52,7 +52,10 @@ from django.core.files.storage import default_storage
 from itertools import chain
  
 
-
+import requests
+url = "https://app.nanonets.com/api/v2/OCR/Models/"
+payload = {}
+response = requests.request("GET", url, data = payload, auth=('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''))
 
 # Create your views here.
 from .models import *
@@ -363,13 +366,15 @@ def docRequest(request, doc_id):
     return redirect("viewDoctor")
 
 def GetInfoOCR(path):
-    cbc = path
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
-    # pytesseract.pytesseract.tesseract_cmd= r'C:\Users\tirth\AppData\Local\Programs\Tesseract-OCR\tesseract.exe' #enter your path here
-    text = pytesseract.image_to_string(Image.open(cbc))
-
+    cbc = path.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
+    print(type(cbc))
+    data = {'file': open('media/'+cbc, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
+    
 
 
 
@@ -382,7 +387,7 @@ def upload(request):
 
 def fileData(request):
     # print(request.session["confirm_id"])
-    print("YOOOOO")
+   
     if "confirm_id" in request.session:
     
         context = {}
@@ -522,7 +527,6 @@ def fileData(request):
 
             return render(request, 'HtmlFiles/confirmForm.html', context)
     else:
-        print("yessss")
         return redirect('viewmyreports')
 
     # return redirect('FILE')
@@ -534,10 +538,10 @@ environ.Env.read_env()
 key: bytes = bytes(env('KEY'),'ascii')
 # print(key)
 # print(type(key))
-
 from cryptography.fernet import Fernet
 # key = b'nMkhkaca8wdcK9NDPKmNCFOggEp0OwfPOqLl3BhpyHI='
 f = Fernet(key)
+
 def confirmForm(request):
     if request.method == 'POST':
         form = ConfirmForm(request.POST)
@@ -695,14 +699,66 @@ def dashboard(request,rid):
 
 
 def docDashboard(request, rid):
-    # print(user_id)
-    # user = User.objects.get(id=user_id)
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
    
     all_reports= Cbc.objects.get(id=rid)
+    context={}
+    wbc = float(f.decrypt(all_reports.wbc_enc))
+    print(wbc)
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
 
 def redocDashboard(request):
     rid=request.session['rid']

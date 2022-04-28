@@ -14,45 +14,45 @@
     
     <body>
       <div class="abouts">
-      <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
 
-        <a class="navbar-brand" href="/home/">
-        <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
-        </a>
+          <a class="navbar-brand" href="/home/">
+          <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+          </a>
+    
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
   
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-
-          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/home/">Home</a>
-            </li>
-			<li class="nav-item">
-                <a class="nav-link" href="/viewmyreports/">MyReports</a>
-            </li>
-			<li class="nav-item">
-                <a class="nav-link" href="/allreports/">Upload</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/viewDoctor/" >Book A Doctor</a>
-            </li>
-			<li class="nav-item">
-      {% if user.is_authenticated %}
-      {% csrf_token %}
-                <a class="nav-link" href="/userProfile/">{{name}}</a>
-                {% endif %}
-            </li>
-			<li class="nav-item">
-                <a class="nav-link" href="/logout/">Logout</a>
-            </li>
-            
-          </ul>
-        </div>
-      </nav>
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+  
+              <li class="nav-item">
+                  <font size="+3"><a class="nav-link" style="color:black; font-size: 50%; " href="/home/">Home</a></font>
+              </li>
+              <li class="nav-item">
+                  <font size="+3">  <a class="nav-link"style=" color:black; font-size: 50%;" href="/viewmyreports/">MyReports</a></font>
+              </li>
+              <li class="nav-item">
+                  <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/allreports/">Upload</a></font>
+              </li>
+              <li class="nav-item">
+                  <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/viewDoctor/" >Book A Doctor</a></font>
+              </li>
+              <li class="nav-item">
+        {% if user.is_authenticated %}
+        {% csrf_token %}
+        <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/userProfile/">{{name}}</a></font>
+                  {% endif %}
+              </li>
+              <li class="nav-item">
+                  <font size="+3">  <a class="nav-link" style="color:black; font-size: 50%;"href="/logout/">Logout</a></font>
+              </li>
+              
+            </ul>
+          </div>
+        </nav>
 
 
     <div class="about-section">

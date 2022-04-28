@@ -45,25 +45,25 @@
               <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
     
                 <li class="nav-item">
-                    <a class="nav-link"style="color:black;" href="/home/">Home</a>
+                    <font size="+3"><a class="nav-link" style="color:black; font-size: 50%; " href="/home/">Home</a></font>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"style="color:black;" href="/viewmyreports/">MyReports</a>
+                    <font size="+3">  <a class="nav-link"style=" color:black; font-size: 50%;" href="/viewmyreports/">MyReports</a></font>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" style="color:black;"href="/allreports/">Upload</a>
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/allreports/">Upload</a></font>
                 </li>
                 <li class="nav-item">
-                    <font size="+2"><a class="nav-link" style="color:black;"href="/viewDoctor/" >Book A Doctor</a></font>
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/viewDoctor/" >Book A Doctor</a></font>
                 </li>
                 <li class="nav-item">
           {% if user.is_authenticated %}
           {% csrf_token %}
-          <font size="+3"> <a class="nav-link" style="color:black;"href="/userProfile/">{{name}}</a></font>
+          <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/userProfile/">{{name}}</a></font>
                     {% endif %}
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" style="color:black;"href="/logout/">Logout</a>
+                    <font size="+3">  <a class="nav-link" style="color:black; font-size: 50%;"href="/logout/">Logout</a></font>
                 </li>
                 
               </ul>
@@ -93,10 +93,10 @@
                                     <div class="card-body">
                                         <div style="text-align: center; ">
                                        
-                                        <h3 class="card-title"><b>Name:{{i.username}}</b></h3>
+                                        <h3 class="card-title"><b>Name:{{i.doctor.username}}</b></h3>
                                       
-                                        <p class="card-tetx"> <b>Gender:{{i.doctor.gender}}</b></p></p>
-                                        <p class="card-tetx"> <b>Specialization:{{i.doctor.Specialization}}</b></p></p>
+                                        <p class="card-title"> <b>Gender:{{i.doctor.gender}}</b></p></p>
+                                        <p class="card-title"> <b>Specialization:{{i.doctor.Specialization}}</b></p></p>
                                         {% if i.status == 0 %}
                                         <div class="mx-2">
                                             <a href="{% url 'docRequest' i.id%}"><button type="button" onclick="two();"  name="{{i}}" class="btn btn-outline-success btn-m" data-toggle="modal" 
