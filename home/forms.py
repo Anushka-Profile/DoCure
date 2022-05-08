@@ -1,9 +1,11 @@
 from datetime import date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from pytz import timezone
 from .models import User,Cbc,ConfirmDoctor, Urine
 from .models import Comments
 from django.contrib.auth.hashers import make_password
+from django.core.validators import MaxValueValidator
 
 from home import models
 
@@ -27,10 +29,7 @@ class NewUserForm(UserCreationForm):
     weight= forms.IntegerField(label='Weight', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Weight in Kg'}),help_text='Enter Weight in Numbers only')
     date= forms.DateField(label='Date of birth', 
-                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}))
-    
-    
-
+                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}),validators=[MaxValueValidator(date.today)])
     class Meta:
         model = User
         fields = ("username","first_name",'last_name', "email", "password1", "password2","height","weight","gender","date")
@@ -59,7 +58,7 @@ class DoctorForm(forms.ModelForm):
     email= forms.CharField(label='Email', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Email-id'}),help_text='Enter email in username@gmail.com form only')
     phone_number= forms.CharField(label='phonenumber', 
-                    widget=forms.TextInput(attrs={'placeholder': 'Enter your Correct Phone Number'}),help_text='Enter 10 digit number only')
+                    widget=forms.TextInput(attrs={'placeholder': 'Enter your 10 digit Phone Number'}),help_text='Enter 10 digit number only')
     
    
     
@@ -125,7 +124,7 @@ class EditProfile(forms.ModelForm):
     weight= forms.IntegerField(label='Weight', 
                     widget=forms.TextInput(attrs={'placeholder': 'Enter your Weight in Kg'}),help_text='Enter Weight in Numbers only')
     date= forms.DateField(label='Date of birth', 
-                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}))
+                    widget=forms.TextInput(attrs={'type': 'date','placeholder': 'Enter your dob'}),validators=[MaxValueValidator(date.today)])
     class Meta:
         model = User
         fields = ("username","first_name",'last_name', "email", "height","weight","gender","date")

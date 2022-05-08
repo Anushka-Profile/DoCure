@@ -148,7 +148,6 @@ def Doctorregister(request):
 def about(request):
 	return render(request,'HtmlFiles/about.html')
 
-
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -726,11 +725,66 @@ def docDashboard(request, rid):
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
+
    
     all_reports= Cbc.objects.get(id=rid)
-    context={}
+    print(all_reports.wbc_enc)
     wbc = float(f.decrypt(all_reports.wbc_enc))
     print(wbc)
+
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        all_reports.pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+    
+
+
+
 
     all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
     if(all_reports.wbc>=1 and all_reports.wbc<100):
@@ -787,11 +841,8 @@ def docDashboard(request, rid):
 def redocDashboard(request):
     rid=request.session['rid']
     form = CommentForm()
-
-    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
-   
     all_reports= Cbc.objects.get(id=rid)
-    context={}
+    print(all_reports.wbc_enc)
     wbc = float(f.decrypt(all_reports.wbc_enc))
     print(wbc)
 
@@ -828,7 +879,7 @@ def redocDashboard(request):
     elif(all_reports.pc>=10000 and all_reports.pc<100000):
         all_reports.pc *= 100
     elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
+        all_reports.pc *= 10
     
     if(all_reports.rcd_enc != None):
         all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
@@ -845,9 +896,8 @@ def redocDashboard(request):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
-
-
+    
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
 
 
 def addComment(request):

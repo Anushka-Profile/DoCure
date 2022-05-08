@@ -20,8 +20,7 @@ urlpatterns = [
   path('Doctorregister/', views.Doctorregister, name="Doctorregister"),
   path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('Doctorlogin/', views.Doctorlogin, name="Doctorlogin"),
-  path('confirmForm/', views.confirmForm, name="confirmForm"),
-   
+  path('confirmForm/', views.confirmForm, name="confirmForm"),   
 
 
 	
