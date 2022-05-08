@@ -4,7 +4,7 @@ from site import USER_BASE
 # from tkinter.tix import Form
 from urllib import request
 from django.shortcuts import render, redirect 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, BadHeaderError
@@ -51,6 +51,10 @@ from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 from itertools import chain
  
+
+import random
+import datetime
+import time
 
 import requests
 url = "https://app.nanonets.com/api/v2/OCR/Models/"
@@ -366,12 +370,15 @@ def docRequest(request, doc_id):
     return redirect("viewDoctor")
 
 def GetInfoOCR(path):
-    cbc = path.name
-    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
-    print(type(cbc))
-    data = {'file': open('media/'+cbc, 'rb')}
-    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
-    text=response.text.replace('\\n',' ')
+    cbc = path
+    # url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
+    # print(type(cbc))
+    # data = {'file': open('media/'+cbc, 'rb')}
+    # response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    # text=response.text.replace('\\n',' ')
+    pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    text = pytesseract.image_to_string(Image.open(cbc))
+    print(text)
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
     
@@ -481,6 +488,7 @@ def fileData(request):
                             
                         
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                        print(uploaded_file)
                         rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
                         user = request.user.get_username()
 
@@ -628,7 +636,12 @@ def confirmForm(request):
     return redirect('viewmyreports')
 
    
-
+def getJsonData(request):
+    data= {
+        "sales":100,
+        "customers":10,
+    }
+    return JsonResponse(data)
 
 def dashboard(request,rid):
     context={}
@@ -691,10 +704,21 @@ def dashboard(request,rid):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
     
 
+    labels = []
+    data = []
 
+    cbc = Cbc.objects.filter(user=request.user).order_by('date')
+    for c in cbc:
+        d=c.date
+        labels.append(str(d))
+        wbc = float(f.decrypt(c.wbc_enc))
+        data.append(wbc)
+
+    print(labels)
+    print(data)
 
     # print(all_reports.file.path)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data})
 
 
 
@@ -764,8 +788,64 @@ def redocDashboard(request):
     rid=request.session['rid']
     form = CommentForm()
 
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+   
     all_reports= Cbc.objects.get(id=rid)
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    context={}
+    wbc = float(f.decrypt(all_reports.wbc_enc))
+    print(wbc)
+
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
 
 
 
