@@ -1,5 +1,6 @@
 from multiprocessing import context
 from site import USER_BASE
+from token import RBRACE
 # from tkinter.font import names
 # from tkinter.tix import Form
 from urllib import request
@@ -369,14 +370,13 @@ def docRequest(request, doc_id):
     return redirect("viewDoctor")
 
 def GetInfoOCR(path):
-    cbc = path
-    # url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
-    # print(type(cbc))
-    # data = {'file': open('media/'+cbc, 'rb')}
-    # response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
-    # text=response.text.replace('\\n',' ')
-    pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-    text = pytesseract.image_to_string(Image.open(cbc))
+    cbc = path.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/5fdf8b64-fa8e-4c90-9102-15e7eeb961e4/LabelFile/?async=false'    
+    data = {'file': open('media/'+cbc, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    # text = pytesseract.image_to_string(Image.open(cbc))
     print(text)
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
@@ -705,6 +705,8 @@ def dashboard(request,rid):
 
     labels = []
     data = []
+    labels1 = []
+    data1 = []
 
     cbc = Cbc.objects.filter(user=request.user).order_by('date')
     for c in cbc:
@@ -712,12 +714,19 @@ def dashboard(request,rid):
         labels.append(str(d))
         wbc = float(f.decrypt(c.wbc_enc))
         data.append(wbc)
+    for c in cbc:
+        d=c.date
+        labels1.append(str(d))
+        rbc = float(f.decrypt(c.rbc_enc))
+        data1.append(rbc)
 
-    print(labels)
-    print(data)
+    # print(labels)
+    # print(data)
+    # print(labels1)
+    # print(data1)
 
     # print(all_reports.file.path)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data})
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 
