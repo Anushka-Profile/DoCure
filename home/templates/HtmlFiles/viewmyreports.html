@@ -175,14 +175,17 @@
              {% if i.type == 'Cbc' %}
              <td><div style="text-align: center;">
                 <a href="{% url 'dashboard' i.id%}"class="accept" name="{{i}}"
-                    data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div></td>
+                    data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div>
+            </td>
             <td>
                 <a href="{% url 'deleteReport' i.id %}"class="deny" name="remove"
                 data-target="#loginModal1" value="reject">Delete Report<span class="fa fa-check"></span></a>  
             </td>
             {% elif i.type == 'Urine' %}
-            <td><div style="text-align: center;">
-                TBD
+            <td>
+                <div style="text-align: center;">
+                <a href="{% url 'urineDashboard' i.id %}"class="accept" name="{{i}}"
+                    data-target="#loginModal1" value="{{i}}">ViewReports<span class="fa fa-check"></span></a></div> 
             </td>
             <td>
                 <a href="{% url 'deleteUrineReport' i.id %}"class="deny" name="remove"

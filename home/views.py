@@ -149,6 +149,13 @@ def Doctorregister(request):
 def about(request):
 	return render(request,'HtmlFiles/about.html')
 
+def urineDashboard(request,rid):
+    context={}
+    user=request.user or None
+    name=request.user.username or None
+    all_Urine_reports= Urine.objects.get(user=request.user, id=rid)
+    return render(request,'HtmlFiles/urineDashboard.html',context={'name':name,'all_report':all_Urine_reports})
+
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')

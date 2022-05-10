@@ -73,6 +73,8 @@ path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('UrineFileData/', views.UrineFileData, name="UrineFileData"),
   path('confirmUrineForm/', views.confirmUrineForm, name="confirmUrineForm"),
   path('getJsonData/', views.getJsonData, name="getJsonData"),
+  path('urineDashboard/<int:rid>', views.urineDashboard, name="urineDashboard"),   
+
 
 url(r'^media/(?P<path>.)$', serve,{'document_root':       settings.MEDIA_ROOT}), 
     url(r'^static/(?P<path>.)$', serve,{'document_root': settings.STATIC_ROOT}),
