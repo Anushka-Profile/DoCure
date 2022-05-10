@@ -744,7 +744,8 @@ def docDashboard(request, rid):
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
-
+    user_id=request.session['user_id']
+    user = User.objects.get(id =user_id)
    
     all_reports= Cbc.objects.get(id=rid)
     print(all_reports.wbc_enc)
@@ -860,7 +861,7 @@ def docDashboard(request, rid):
     labels1 = []
     data1 = []
     print(type(rid))
-    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    cbc = Cbc.objects.filter(user=user,date__range=["1947-01-01", all_reports.date]).order_by('date')
     for c in cbc:
         d=c.date.date()
         wbc = float(f.decrypt(c.wbc_enc))
@@ -885,9 +886,12 @@ def docDashboard(request, rid):
     return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name,'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 def redocDashboard(request):
+    name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     rid=request.session['rid']
     form = CommentForm()
     all_reports= Cbc.objects.get(id=rid)
+    user_id=request.session['user_id']
+    user = User.objects.get(id =user_id)
     print(all_reports.wbc_enc)
     wbc = float(f.decrypt(all_reports.wbc_enc))
     print(wbc)
@@ -947,7 +951,7 @@ def redocDashboard(request):
     labels1 = []
     data1 = []
     print(type(rid))
-    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    cbc = Cbc.objects.filter(user=user,date__range=["1947-01-01", all_reports.date]).order_by('date')
     for c in cbc:
         d=c.date.date()
         wbc = float(f.decrypt(c.wbc_enc))
@@ -969,7 +973,7 @@ def redocDashboard(request):
             labels1.append(str(d))
             data1.append(rbc)
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'name':name, 'form':form, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 def addComment(request):
