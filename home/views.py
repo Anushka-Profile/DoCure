@@ -685,7 +685,7 @@ def dashboard(request,rid):
     elif(all_reports.pc>=10000 and all_reports.pc<100000):
         all_reports.pc *= 100
     elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
+        all_reports.pc *= 10
     
     if(all_reports.rcd_enc != None):
         all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
@@ -707,18 +707,28 @@ def dashboard(request,rid):
     data = []
     labels1 = []
     data1 = []
-
-    cbc = Cbc.objects.filter(user=request.user).order_by('date')
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
     for c in cbc:
-        d=c.date
-        labels.append(str(d))
+        d=c.date.date()
         wbc = float(f.decrypt(c.wbc_enc))
-        data.append(wbc)
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
     for c in cbc:
-        d=c.date
-        labels1.append(str(d))
+        d=c.date.date()
         rbc = float(f.decrypt(c.rbc_enc))
-        data1.append(rbc)
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
 
     # print(labels)
     # print(data)
@@ -845,7 +855,34 @@ def docDashboard(request, rid):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name,'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 def redocDashboard(request):
     rid=request.session['rid']
@@ -905,8 +942,34 @@ def redocDashboard(request):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 def addComment(request):
