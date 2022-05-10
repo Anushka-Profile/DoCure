@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm, NullBooleanField, PasswordInput
 from django.forms.fields import ImageField
 
-from django.utils import timezone
+from datetime import datetime
 
 # Create your models here.
 
@@ -21,7 +21,7 @@ class User(AbstractUser):
     gender=models.CharField(choices=[('Male','Male'),('Female','Female')],max_length=15)
     height=models.IntegerField(null=False, default=0)
     weight=models.IntegerField(null=False, default=0)
-    date=models.DateField(null=False,default=timezone.now)
+    date=models.DateField(null=False,default=datetime.now())
     def __str__(self):
         return self.last_name + " " + self.first_name 
     class Meta:  
@@ -65,7 +65,7 @@ class Cbc(models.Model):
     mcv = models.FloatField(null=True,blank=True,default=None,max_length=150)
     name= models.CharField(max_length=150,null=True,blank=False)
     password=models.CharField(max_length=150,null=True,blank=True)
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=datetime.now())
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
     rbc_enc = models.BinaryField(default=None, null=True, editable=True)
@@ -95,12 +95,12 @@ class FileStore(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=datetime.now())
 
 class Urine(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name= models.CharField(max_length=150,null=True,blank=False)
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=datetime.now())
     image = models.ImageField(default=None, null=True)
     file = models.FileField(default=None, null=True)
     glucose = models.CharField(max_length=150,default=None ,null=True,blank=False)

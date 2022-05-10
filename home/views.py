@@ -1,5 +1,6 @@
 from multiprocessing import context
 from site import USER_BASE
+from token import RBRACE
 # from tkinter.font import names
 # from tkinter.tix import Form
 from urllib import request
@@ -369,14 +370,13 @@ def docRequest(request, doc_id):
     return redirect("viewDoctor")
 
 def GetInfoOCR(path):
-    cbc = path
-    # url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
-    # print(type(cbc))
-    # data = {'file': open('media/'+cbc, 'rb')}
-    # response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
-    # text=response.text.replace('\\n',' ')
-    pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-    text = pytesseract.image_to_string(Image.open(cbc))
+    cbc = path.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/5fdf8b64-fa8e-4c90-9102-15e7eeb961e4/LabelFile/?async=false'    
+    data = {'file': open('media/'+cbc, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    # text = pytesseract.image_to_string(Image.open(cbc))
     print(text)
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
@@ -685,7 +685,7 @@ def dashboard(request,rid):
     elif(all_reports.pc>=10000 and all_reports.pc<100000):
         all_reports.pc *= 100
     elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
+        all_reports.pc *= 10
     
     if(all_reports.rcd_enc != None):
         all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
@@ -705,19 +705,38 @@ def dashboard(request,rid):
 
     labels = []
     data = []
-
-    cbc = Cbc.objects.filter(user=request.user).order_by('date')
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
     for c in cbc:
-        d=c.date
-        labels.append(str(d))
+        d=c.date.date()
         wbc = float(f.decrypt(c.wbc_enc))
-        data.append(wbc)
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
 
-    print(labels)
-    print(data)
+    # print(labels)
+    # print(data)
+    # print(labels1)
+    # print(data1)
 
     # print(all_reports.file.path)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data})
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 
@@ -836,7 +855,34 @@ def docDashboard(request, rid):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name,'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 def redocDashboard(request):
     rid=request.session['rid']
@@ -896,8 +942,34 @@ def redocDashboard(request):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 def addComment(request):
