@@ -21,8 +21,7 @@ urlpatterns = [
   path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('Doctorlogin/', views.Doctorlogin, name="Doctorlogin"),
   path('confirmForm/', views.confirmForm, name="confirmForm"),
-   
-
+  path('urineDashboard/', views.urineDashboard, name="urineDashboard"),   
 
 	
     ]

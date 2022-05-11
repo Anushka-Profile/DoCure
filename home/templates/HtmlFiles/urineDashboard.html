@@ -1,0 +1,115 @@
+<!Doctype HTML>
+{% load static %}
+<html>
+<head>
+	<title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Required css files -->
+	<link rel="stylesheet" type="text/css" href="{% static 'users/css/Dashboard.css' %}"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="ok">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-transperant sticky-top">
+
+            <a class="navbar-brand" href="/home/">
+            <img src='{% static 'users/images/logo1.jpeg' %}' width="90" height="30" alt="">
+            </a>
+      
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+    
+              <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+    
+                <li class="nav-item">
+                    <font size="+3"><a class="nav-link" style="color:black; font-size: 50%; " href="/home/">Home</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3">  <a class="nav-link"style=" color:black; font-size: 50%;" href="/viewmyreports/">MyReports</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/allreports/">Upload</a></font>
+                </li>
+                <li class="nav-item">
+                    <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/viewDoctor/" >Book A Doctor</a></font>
+                </li>
+                <li class="nav-item">
+          {% if user.is_authenticated %}
+          {% csrf_token %}
+          <font size="+3"> <a class="nav-link" style="color:black; font-size: 50%;"href="/userProfile/">{{name}}</a></font>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    <font size="+3">  <a class="nav-link" style="color:black; font-size: 50%;"href="/logout/">Logout</a></font>
+                </li>
+                
+              </ul>
+            </div>
+          </nav>
+
+          <div id="main">
+            <div class="clearfix"></div>
+        </div> 
+
+    
+            <table>
+                
+              <tr>
+                <th>Name</th>
+                <th>Report Value</th>
+              </tr>
+              
+              <tr> 
+                <td>Glucose</td>
+                {% if all_report %}
+                <td >{{all_report.glucose}}</td>
+                {% endif %}
+                <td>
+            </tr>
+
+            <tr> 
+                <td>Ketones</td>
+                {% if all_report %}
+                <td >{{all_report.ketones}}</td>
+                {% endif %}
+                <td>
+            </tr>
+
+            <tr> 
+                <td>Reaction</td>
+                {% if all_report %}
+                <td >{{all_report.reaction}}</td>
+                {% endif %}
+                <td>
+            </tr>
+            <tr> 
+                <td>Specific Gravity</td>
+                {% if all_report %}
+                <td>{{all_report.sg}}</td>
+                {% endif %}
+                <td>
+            </tr>
+            <tr> 
+                <td>Urobilinogen</td>
+                {% if all_report %}
+                <td>{{all_report.uro}}</td>
+                {% endif %}
+                <td>
+            </tr>
+
+
+        </table>
+                  
+
+
+
+
+    </div>
+
+        
+</body>

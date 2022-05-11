@@ -72,8 +72,8 @@ path('Doctorlogout_view/',views.Doctorlogout_view,name='Doctorlogout_view'),
   path('UrineFile/', views.UrineFile, name="UrineFile"),
   path('UrineFileData/', views.UrineFileData, name="UrineFileData"),
   path('confirmUrineForm/', views.confirmUrineForm, name="confirmUrineForm"),
-  path('dashboardUrine/',views.dashboardUrine,name='dashboardUrine'),
-
+  path('getJsonData/', views.getJsonData, name="getJsonData"),
+  path('urineDashboard/<int:rid>', views.urineDashboard, name="urineDashboard"),   
 
 
 url(r'^media/(?P<path>.)$', serve,{'document_root':       settings.MEDIA_ROOT}), 

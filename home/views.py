@@ -1,10 +1,11 @@
 from multiprocessing import context
 from site import USER_BASE
+from token import RBRACE
 # from tkinter.font import names
 # from tkinter.tix import Form
 from urllib import request
 from django.shortcuts import render, redirect 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, BadHeaderError
@@ -51,6 +52,10 @@ from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 from itertools import chain
  
+
+import random
+import datetime
+import time
 
 import requests
 url = "https://app.nanonets.com/api/v2/OCR/Models/"
@@ -144,6 +149,12 @@ def Doctorregister(request):
 def about(request):
 	return render(request,'HtmlFiles/about.html')
 
+def urineDashboard(request,rid):
+    context={}
+    user=request.user or None
+    name=request.user.username or None
+    all_Urine_reports= Urine.objects.get(user=request.user, id=rid)
+    return render(request,'HtmlFiles/urineDashboard.html',context={'name':name,'all_report':all_Urine_reports})
 
 def registerPage(request):
     if request.user.is_authenticated:
@@ -367,11 +378,13 @@ def docRequest(request, doc_id):
 
 def GetInfoOCR(path):
     cbc = path.name
-    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
-    print(type(cbc))
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/5fdf8b64-fa8e-4c90-9102-15e7eeb961e4/LabelFile/?async=false'    
     data = {'file': open('media/'+cbc, 'rb')}
     response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
     text=response.text.replace('\\n',' ')
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    # text = pytesseract.image_to_string(Image.open(cbc))
+    print(text)
     rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv= extract(text)
     return rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv
     
@@ -481,6 +494,7 @@ def fileData(request):
                             
                         
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
+                        print(uploaded_file)
                         rbc, wbc, pc,hgb,rcd,mchc,mpv,pcv,mcv = GetInfoOCR(uploaded_file)
                         user = request.user.get_username()
 
@@ -628,7 +642,12 @@ def confirmForm(request):
     return redirect('viewmyreports')
 
    
-
+def getJsonData(request):
+    data= {
+        "sales":100,
+        "customers":10,
+    }
+    return JsonResponse(data)
 
 def dashboard(request,rid):
     context={}
@@ -673,7 +692,7 @@ def dashboard(request,rid):
     elif(all_reports.pc>=10000 and all_reports.pc<100000):
         all_reports.pc *= 100
     elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
+        all_reports.pc *= 10
     
     if(all_reports.rcd_enc != None):
         all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
@@ -691,10 +710,40 @@ def dashboard(request,rid):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
     
 
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=request.user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
 
+    # print(labels)
+    # print(data)
+    # print(labels1)
+    # print(data1)
 
     # print(all_reports.file.path)
-    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments})
+    return render(request,'HtmlFiles/dashboard.html',context={'name':name,'all_report':all_reports, 'all_comments':all_comments, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 
@@ -702,11 +751,67 @@ def docDashboard(request, rid):
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
     form = CommentForm()
     request.session['rid']=rid
+    user_id=request.session['user_id']
+    user = User.objects.get(id =user_id)
    
     all_reports= Cbc.objects.get(id=rid)
-    context={}
+    print(all_reports.wbc_enc)
     wbc = float(f.decrypt(all_reports.wbc_enc))
     print(wbc)
+
+    all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
+    if(all_reports.wbc>=1 and all_reports.wbc<100):
+        all_reports.wbc *= 1000
+    elif(all_reports.wbc>=100 and all_reports.wbc<1000):
+        all_reports.wbc *= 10
+    
+    all_reports.rbc = float(f.decrypt(all_reports.rbc_enc))
+    if(all_reports.rbc>=100 and all_reports.rbc<1000):
+        all_reports.rbc /= 100
+    elif(all_reports.rbc>=1000 and all_reports.rbc<10000):
+        all_reports.rbc /= 1000
+
+       
+    all_reports.hgb = float(f.decrypt(all_reports.hgb_enc))
+    if(all_reports.hgb>=100 and all_reports.hgb<1000):
+        all_reports.hgb /= 10
+    elif(all_reports.hgb>=1000 and all_reports.hgb<10000):
+        all_reports.hgb /= 100
+       
+       
+       
+    all_reports.pc = float(f.decrypt(all_reports.pc_enc))
+    if(all_reports.pc>=1 and all_reports.pc<10):
+        all_reports.pc *= 1000000
+    elif(all_reports.pc>=10 and all_reports.pc<100):
+        all_reports.pc *= 100000
+    elif(all_reports.pc>=100 and all_reports.pc<1000):
+        all_reports.pc *= 10000
+    elif(all_reports.pc>=1000 and all_reports.pc<10000):
+        all_reports.pc *= 1000
+    elif(all_reports.pc>=10000 and all_reports.pc<100000):
+        all_reports.pc *= 100
+    elif(all_reports.pc>=100000 and all_reports.pc<1000000):
+        all_reports.pc *= 10
+    
+    if(all_reports.rcd_enc != None):
+        all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
+    
+    if(all_reports.mchc_enc != None):
+        all_reports.mchc = float(f.decrypt(all_reports.mchc_enc))
+
+    if(all_reports.mpv_enc != None):
+        all_reports.mpv = float(f.decrypt(all_reports.mpv_enc))
+
+    if(all_reports.pcv_enc != None):
+        all_reports.pcv = float(f.decrypt(all_reports.pcv_enc))
+
+    if(all_reports.mcv_enc != None):
+        all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
+    
+
+
+
 
     all_reports.wbc = float(f.decrypt(all_reports.wbc_enc))
     if(all_reports.wbc>=1 and all_reports.wbc<100):
@@ -758,15 +863,43 @@ def docDashboard(request, rid):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
+
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name,'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 def redocDashboard(request):
-    rid=request.session['rid']
     name=ConfirmDoctor.objects.get(id=request.session['ConfirmDoctor_id'])
+    rid=request.session['rid']
     form = CommentForm()
-   
     all_reports= Cbc.objects.get(id=rid)
-    context={}
+    user_id=request.session['user_id']
+    user = User.objects.get(id =user_id)
+    print(all_reports.wbc_enc)
     wbc = float(f.decrypt(all_reports.wbc_enc))
     print(wbc)
 
@@ -803,7 +936,7 @@ def redocDashboard(request):
     elif(all_reports.pc>=10000 and all_reports.pc<100000):
         all_reports.pc *= 100
     elif(all_reports.pc>=100000 and all_reports.pc<1000000):
-        pc *= 10
+        all_reports.pc *= 10
     
     if(all_reports.rcd_enc != None):
         all_reports.rcd = float(f.decrypt(all_reports.rcd_enc))
@@ -820,9 +953,34 @@ def redocDashboard(request):
     if(all_reports.mcv_enc != None):
         all_reports.mcv = float(f.decrypt(all_reports.mcv_enc))
 
-    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'form':form,'name':name})
+    labels = []
+    data = []
+    labels1 = []
+    data1 = []
+    print(type(rid))
+    cbc = Cbc.objects.filter(user=user,date__range=["1947-01-01", all_reports.date]).order_by('date')
+    for c in cbc:
+        d=c.date.date()
+        wbc = float(f.decrypt(c.wbc_enc))
+        if(wbc>=1 and wbc<100):
+            wbc *= 1000
+        elif(wbc>=100 and wbc<1000):
+            wbc *= 10
+        if wbc>0.0:
+            labels.append(str(d))
+            data.append(wbc)
+    for c in cbc:
+        d=c.date.date()
+        rbc = float(f.decrypt(c.rbc_enc))
+        if(rbc>=100 and rbc<1000):
+            rbc /= 100
+        elif(rbc>=1000 and rbc<10000):
+            all_reports.rbc /= 1000
+        if rbc>0.0:
+            labels1.append(str(d))
+            data1.append(rbc)
 
-
+    return render(request,'HtmlFiles/docDashboard.html',context={'all_report':all_reports, 'name':name, 'form':form, 'labels':labels, 'data':data,'labels1':labels1, 'data1':data1})
 
 
 def addComment(request):
@@ -1110,12 +1268,14 @@ def getPDFText(file, password):
     return text
 
 def getImageText(uploaded_file):
-    urine = uploaded_file.name
-    url = 'https://app.nanonets.com/api/v2/OCR/Model/1873b596-aa12-4b24-a683-ab250a355bba/LabelFile/?async=false'
-    print(type(urine))
-    data = {'file': open('media/'+urine, 'rb')}
+    cbc = uploaded_file.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/5fdf8b64-fa8e-4c90-9102-15e7eeb961e4/LabelFile/?async=false'    
+    data = {'file': open('media/'+cbc, 'rb')}
     response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
     text=response.text.replace('\\n',' ')
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #enter your path here
+    # text = pytesseract.image_to_string(Image.open(cbc))
+
     return text
                         
 def UrineFile(request):
@@ -1130,7 +1290,38 @@ def extractUrine(text):
     glucose = glucose_re.search(text)
     if (glucose != None):
         glu = glucose[2]
-    return glu
+    else:
+        glu = None
+        
+    ketones_re = re.compile(r'(.*[kK]etones\W*)(\w+)')
+    ketones = ketones_re.search(text)
+    if (ketones != None):
+        ket = ketones[2]
+    else:
+        ket = None
+        
+    reaction_re = re.compile(r'(.*[rR]eaction.*|.*pH\W*)(\w+)')
+    reaction = reaction_re.search(text)
+    if (reaction != None):
+        reac = reaction[2]
+    else:
+        reac = None
+    
+    sg_re = re.compile(r'(.*[Ss]pecific\D*)([\d,.]+)')
+    sg = sg_re.search(text)
+    if (reaction != None):
+        sg = sg[2]
+    else:
+        sg = None
+        
+    uro_re = re.compile(r'(.*[uU]robilinogen\W*)(\w+)')
+    uro = uro_re.search(text)
+    if (uro != None):
+        uro = uro[2]
+    else:
+        uro = None
+    
+    return glu, ket, reac, sg, uro
 
 
 def UrineFileData(request):
@@ -1173,7 +1364,7 @@ def UrineFileData(request):
                         try:
                             text = getPDFText(uploaded_file,filepassword)
                             print(text)
-                            glu = extractUrine(text)
+                            glu, ket, reac, sg, uro = extractUrine(text)
                         except Exception as e:
                             messages.error(request,'Password is wrong')
                             return redirect('UrineFile')
@@ -1181,9 +1372,21 @@ def UrineFileData(request):
                          
                             if(glu == ''):
                                 glu = glu
+                            if(ket == ''):
+                                ket = ket
+                            if(reac == ''):
+                                reac = reac
+                            if(sg == None):
+                                sg = sg
+                            if(uro == ''):
+                                uro = uro
                             
                             initial = {
                                     'glucose': glu,
+                                    'ketones': ket,
+                                    'reaction': reac,
+                                    'sg': sg,
+                                    'uro': uro,
                                     'name':file_name,
                                     'file':uploaded_file,
                                     }
@@ -1203,13 +1406,25 @@ def UrineFileData(request):
                     elif(uploaded_file.name.lower().endswith(('.png', '.jpg', '.jpeg'))):
                         text = getImageText(uploaded_file)
                         print(text)
-                        glu = extractUrine(text)
+                        glu, ket, reac, sg, uro  = extractUrine(text)
                         user = request.user.get_username()
                         if(glu == ''):
                             glu = glu
+                        if(ket == ''):
+                            ket = ket
+                        if(reac == ''):
+                            reac = reac
+                        if(sg == None):
+                            sg = sg
+                        if(uro == ''):
+                            uro = uro
                         
                         initial = {
                                 'glucose': glu,
+                                'ketones': ket,
+                                'reaction': reac,
+                                'sg': sg,
+                                'uro': uro,
                                 'name':file_name,
                                 'file':uploaded_file,
                                 }
@@ -1256,12 +1471,3 @@ def deleteUrineReport(request, rid):
     user=request.user or None
     name=request.user.username or None
     return redirect('viewmyreports')
-def dashboardUrine(request,rid):
-    context={}
-    name=request.user.username or None
-  
-    urine_reports= Urine.objects.get(user=request.user, id=rid)
-    all_comments = Comments.objects.filter(user=request.user, report=urine_reports)
-    
-    print(urine_reports.file.path)
-    return render(request,'HtmlFiles/dashboardUrine.html',context={'name':name,'urine_report':urine_reports, 'all_comments':all_comments})

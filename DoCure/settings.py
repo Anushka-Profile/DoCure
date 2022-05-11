@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'home',
     'crispy_forms',
     'encrypted_secrets',
-    
+    'chartjs',
+    'django_nvd3',
 ]
 AUTH_USER_MODEL='home.User'
 #AUTH_USER_MODEL='home.Doctor'
