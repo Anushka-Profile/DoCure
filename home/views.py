@@ -1268,9 +1268,13 @@ def getPDFText(file, password):
     return text
 
 def getImageText(uploaded_file):
-    cbc = uploaded_file
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #enter your path here
-    text = pytesseract.image_to_string(Image.open(cbc))
+    cbc = uploaded_file.name
+    url = 'https://app.nanonets.com/api/v2/OCR/Model/5fdf8b64-fa8e-4c90-9102-15e7eeb961e4/LabelFile/?async=false'    
+    data = {'file': open('media/'+cbc, 'rb')}
+    response = requests.post(url, auth=requests.auth.HTTPBasicAuth('bORDKfw8l-5-ulI1jCxmrFBQpiUHvgQP', ''), files=data)
+    text=response.text.replace('\\n',' ')
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #enter your path here
+    # text = pytesseract.image_to_string(Image.open(cbc))
 
     return text
                         
