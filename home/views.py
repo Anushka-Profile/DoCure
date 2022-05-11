@@ -1087,7 +1087,7 @@ def docViewReports(request, user_id):
     user = User.objects.get(id =user_id)
     request.session['user_id']=user_id
     all_reports= Cbc.objects.filter(user=user).order_by("-date") #.filter(user=request.user)
-    return render(request,'HtmlFiles/docViewReports.html',context={'posts':all_reports,'name':name})
+    return render(request,'HtmlFiles/docviewreports.html',context={'posts':all_reports,'name':name})
 
 def reports(request):
     if 'confirm_id' in request.session:
