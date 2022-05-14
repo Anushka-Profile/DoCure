@@ -55,14 +55,14 @@ INSTALLED_APPS = [
 ]
 AUTH_USER_MODEL='home.User'
 #AUTH_USER_MODEL='home.Doctor'
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_USE_SSL = True    # use port 465
-EMAIL_USE_TLS = True  
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'Docure22@gmail.com'
-EMAIL_HOST_PASSWORD = 'Docure@2022'
-DEFAULT_FROM_EMAIL = 'Docure22@gmail.com'
+# EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# # EMAIL_USE_SSL = True    # use port 465
+# EMAIL_USE_TLS = True  
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'Docure22@gmail.com'
+# EMAIL_HOST_PASSWORD = 'Docure@2022'
+# DEFAULT_FROM_EMAIL = 'Docure22@gmail.com'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
