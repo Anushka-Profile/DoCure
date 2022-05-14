@@ -132,11 +132,11 @@ def Doctorregister(request):
             form = DoctorForm(request.POST)
             if form.is_valid():
                 # password = make_password(request.data['password'])
-                subject = 'Welcome to Docure'
-                message = 'You have Successfully Signed up into our WebApp You can go and Login to our App'
-                recepient = str(form['email'].value())
-                send_mail(subject, message, EMAIL_HOST_USER,
-                              [recepient], fail_silently=False)
+                # subject = 'Welcome to Docure'
+                # message = 'You have Successfully Signed up into our WebApp You can go and Login to our App'
+                # recepient = str(form['email'].value())
+                # send_mail(subject, message, EMAIL_HOST_USER,
+                #               [recepient], fail_silently=False)
                 form.save()
                 # login(request, user)
                 messages.success(request, "Registration successful." )
