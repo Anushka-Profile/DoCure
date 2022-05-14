@@ -825,7 +825,7 @@
     <div class="commentsss">
         <h1>Doctor Comments</h1>
         {% for c in all_comments %}
-            <h2 style="margin-left:-75%;">Doctor:{{c.doctor.username}}</h2>
+            <h2 style="margin-left:-75%;">Doctor:{{c.doctor.doctor.username}}</h2>
             <p style="font-size: 150%; margin-left:-55%;">{{c.field_name}}</p></font>
         {% endfor %}
     </div>
