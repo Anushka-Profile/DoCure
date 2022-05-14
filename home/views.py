@@ -23,10 +23,10 @@ from django.contrib.auth import authenticate, login, logout
 from matplotlib.pyplot import rcdefaults, text
 from numpy import delete
 from platformdirs import Path
-from DoCure.settings import EMAIL_HOST_USER
+# from DoCure.settings import EMAIL_HOST_USER
 
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.mail import send_mail
+# from django.core.mail import send_mail
 
 from .forms  import  ConfirmDoctors, NewUserForm,DoctorForm,ConfirmForm,EditProfile,CommentForm,EditProfileDoctor, UploadForm, ConfirmUrineForm
 from django.shortcuts import render, redirect
